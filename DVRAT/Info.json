@@ -1,8 +1,10 @@
 {
 	"Id": "DVRAT",
-	"Version": "0.1.0",
+	"Version": "1.0.0",
 	"DisplayName": "Route Assistant Tablet (R.A.T.)",
 	"Author": "Fuggschen",
+	"HomePage": "https://www.nexusmods.com/derailvalley/mods/1849",
+	"Repository": "https://raw.githubusercontent.com/Fuggschen/dv-RAT/refs/heads/main/repository.json",
 	"EntryMethod": "DVRAT.RATMain.Load",
 	"AssemblyName": "DVRAT.dll",
 	"Requirements": ["custom_item_mod"],

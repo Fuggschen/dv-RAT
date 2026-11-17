@@ -4,5 +4,6 @@
   <Project Path="DVRAT/DVRAT.csproj" />
   <Project Path="DVRAT.Multiplayer/DVRAT.Multiplayer.csproj" />
   <Project Path="DVRAT.Opus/DVRAT.Opus.csproj" />
+  <Project Path="DVRAT.Release/DVRAT.Release.csproj" />
   <Project Path="RATCapture/RATCapture.csproj" />
 </Solution>

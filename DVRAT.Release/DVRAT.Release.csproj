@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+
+  <!-- Builds after every project that writes to build/, then zips build/ into release/DVRAT-<version>.zip. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <BuildOutputDir>$(MSBuildThisFileDirectory)..\build\</BuildOutputDir>
+    <ReleaseDir>$(MSBuildThisFileDirectory)..\release\</ReleaseDir>
+    <PackDir>$(MSBuildThisFileDirectory)obj\pack\</PackDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DVRAT\DVRAT.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\DVRAT.Multiplayer\DVRAT.Multiplayer.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\DVRAT.Opus\DVRAT.Opus.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <Target Name="PackRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <PropertyGroup>
+      <ModVersion>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(BuildOutputDir)Info.json')), '"Version"\s*:\s*"([^"]+)"').Groups[1].Value)</ModVersion>
+      <ZipFile>$(ReleaseDir)DVRAT-$(ModVersion).zip</ZipFile>
+    </PropertyGroup>
+    <Error Condition="'$(ModVersion)' == ''" Text="No Version in $(BuildOutputDir)Info.json." />
+    <ItemGroup>
+      <ModFiles Include="$(BuildOutputDir)**\*" />
+    </ItemGroup>
+    <!-- Unity Mod Manager installs a zip that holds the mod folder, so the files go under DVRAT\. -->
+    <RemoveDir Directories="$(PackDir)" />
+    <Copy SourceFiles="@(ModFiles)" DestinationFiles="@(ModFiles->'$(PackDir)DVRAT\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <MakeDir Directories="$(ReleaseDir)" />
+    <ZipDirectory SourceDirectory="$(PackDir)" DestinationFile="$(ZipFile)" Overwrite="true" />
+    <Message Importance="high" Text="Release zip: $([System.IO.Path]::GetFullPath('$(ZipFile)'))" />
+  </Target>
+
+</Project>

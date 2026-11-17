@@ -7,6 +7,7 @@
 **/obj/
 **/build/
 **/out/
+/release/
 
 # ---- NuGet ----
 **/packages/
