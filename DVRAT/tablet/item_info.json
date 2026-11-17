@@ -1,8 +1,8 @@
 {
 	"Name": "Route Assistant Tablet",
 	"Description": "An old but reliable tablet for route planning and train monitoring. Shows an EbuLa-style timetable, train and job data, and info pages for every station.",
-	"Amount": 1,
-	"Price": 5000,
+	"Amount": 5,
+	"Price": 10000,
 	"AssetBundleName": "dvrat_assets",
 	"PrefabPath": "Assets/Prefabs/RAT_Item.prefab",
 	"IconStandardPath": "Assets/Icons/RAT_Icon.png",

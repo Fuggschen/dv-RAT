@@ -14,7 +14,7 @@ Three items are sold in the shop:
 
 | Item | Price | Stock | What it does |
 |---|---|---|---|
-| Route Assistant Tablet | $5000 | 5 | The tablet. Mount it on a car. |
+| Route Assistant Tablet | $10000 | 5 | The tablet. Mount it on a car. |
 | R.A.T. Train Speaker | $3000 | 25 | A loudspeaker. Connects by itself to a tablet on the same train; up to five play together. |
 | R.A.T. Train Subwoofer | $6000 | 5 | Plays only the bass. One per train. |
 
