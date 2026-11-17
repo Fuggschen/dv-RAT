@@ -259,3 +259,9 @@ The solution is `DVRAT.slnx`:
 
 `ffmpeg.exe` is built with `tools/build-ffmpeg.sh` in WSL; without it the Media Player plays only
 `.mp3`, `.ogg` and `.wav`. `ratcapture-linux` is built with `tools/build-ratcapture-linux.sh`.
+
+## Credits
+
+- Tablet 3D model and textures: My Name Is BorING
+- Subwoofer model: [Subwoofer sealed speaker](https://sketchfab.com/3d-models/subwoofer-sealed-speaker-948dc1d2461c4ddfba2538fc3f8429b6) by [Eveston - Elite Big Speakerman - Hugo](https://sketchfab.com/EvesStudio2008), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- Speaker model: [Modern speaker](https://sketchfab.com/3d-models/modern-speaker-4e0b5a1d66724d62845cdc4f1e303d82) by [Daniyal Malik](https://sketchfab.com/daniyalmalik), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
