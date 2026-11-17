@@ -1,0 +1,71 @@
+ManifestFileVersion: 0
+CRC: 331568649
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b348e5b758b4d567397382bac5a7b18c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: df262b05daaaa28ea2131c89a5635d98
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 1368475075, guid: dfc73485fc553d24bb6227552679738c, type: 3}
+- Class: 114
+  Script: {fileID: 1863741276, guid: 1210c64a73681284f92034db9f0b3252, type: 3}
+- Class: 114
+  Script: {fileID: 378242808, guid: dfc73485fc553d24bb6227552679738c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: -1201869871, guid: 1210c64a73681284f92034db9f0b3252, type: 3}
+- Class: 114
+  Script: {fileID: 1380256985, guid: 1210c64a73681284f92034db9f0b3252, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Icons/Subwoofer_Dropped.png
+- Assets/Prefabs/Subwoofer_Item.prefab
+- Assets/Prefabs/Speaker_Item.prefab
+- Assets/Prefabs/Subwoofer_ShelfItem.prefab
+- Assets/Icons/RAT_Icon.png
+- Assets/Prefabs/RAT_ShelfItem.prefab
+- Assets/Icons/RAT_Dropped.png
+- Assets/Icons/Subwoofer_Icon.png
+- Assets/Prefabs/RAT.prefab
+- Assets/Icons/Speaker_Dropped.png
+- Assets/Prefabs/Subwoofer.prefab
+- Assets/Prefabs/Speaker.prefab
+- Assets/Prefabs/RAT_Item.prefab
+- Assets/Prefabs/Speaker_ShelfItem.prefab
+- Assets/Icons/Speaker_Icon.png
+Dependencies: []

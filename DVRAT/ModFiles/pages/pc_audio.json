@@ -1,0 +1,12 @@
+{
+  "id": "pc_audio",
+  "title": "PC Audio",
+  "parent": "tools",
+  "order": 30,
+  "rows": [
+    { "type": "widget", "name": "pcAudio" }
+  ],
+  "softKeys": [
+    { "label": "Devices", "link": "media_devices" }
+  ]
+}

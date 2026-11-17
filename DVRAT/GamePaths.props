@@ -1,0 +1,19 @@
+<Project>
+    <!-- Where the game, Unity and other mods' DLLs are, for every project that builds against the game. -->
+    <PropertyGroup>
+        <DvInstallDir>D:\SteamLibrary\steamapps\common\Derail Valley</DvInstallDir>
+        <ReferencesDir>Z:\Projekte\Derail Valley Development\References</ReferencesDir>
+        <UnityInstallDir>C:\Program Files\Unity\Hub\Editor\2019.4.40f1\Editor</UnityInstallDir>
+        <ReferencePath>
+			$(ReferencesDir)\Multiplayer\;
+			$(ReferencesDir)\DVCustomCarLoader\;
+            $(ReferencesDir)\custom_item_mod\;
+            $(DvInstallDir)\DerailValley_Data\Managed\;
+            $(DvInstallDir)\DerailValley_Data\Managed\UnityModManager\;
+            $(UnityInstallDir)\Data\Managed\;
+        </ReferencePath>
+        <AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
+		<SignToolPath>C:\Program Files (x86)\Microsoft SDKs\ClickOnce\SignTool\</SignToolPath>
+		<Cert-Thumb></Cert-Thumb>
+    </PropertyGroup>
+</Project>

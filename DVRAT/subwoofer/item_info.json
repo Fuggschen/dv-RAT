@@ -1,0 +1,11 @@
+{
+	"Name": "R.A.T. Train Subwoofer",
+	"Description": "A subwoofer for the deep end of the music. Connects to an R.A.T. tablet on the same train by itself, one per train, and plays only the bass. Its LED lights while a tablet is connected.",
+	"Amount": 5,
+	"Price": 6000,
+	"AssetBundleName": "../tablet/dvrat_assets",
+	"PrefabPath": "Assets/Prefabs/Subwoofer_Item.prefab",
+	"IconStandardPath": "Assets/Icons/Subwoofer_Icon.png",
+	"IconDroppedPath": "Assets/Icons/Subwoofer_Dropped.png",
+	"ShelfPrefabPath": "Assets/Prefabs/Subwoofer_ShelfItem.prefab"
+}

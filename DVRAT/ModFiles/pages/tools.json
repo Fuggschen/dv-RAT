@@ -1,0 +1,8 @@
+{
+  "id": "tools",
+  "title": "Tools",
+  "order": 60,
+  "rows": [
+    { "type": "menu" }
+  ]
+}

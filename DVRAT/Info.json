@@ -1,0 +1,10 @@
+{
+	"Id": "DVRAT",
+	"Version": "0.1.0",
+	"DisplayName": "Route Assistant Tablet (R.A.T.)",
+	"Author": "Fuggschen",
+	"EntryMethod": "DVRAT.RATMain.Load",
+	"AssemblyName": "DVRAT.dll",
+	"Requirements": ["custom_item_mod"],
+	"LoadAfter": ["custom_item_mod", "Multiplayer"]
+}

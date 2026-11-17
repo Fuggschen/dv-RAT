@@ -1,0 +1,12 @@
+{
+  "id": "radio",
+  "title": "Internet Radio",
+  "parent": "tools",
+  "order": 20,
+  "rows": [
+    { "type": "widget", "name": "radio" }
+  ],
+  "softKeys": [
+    { "label": "Devices", "link": "media_devices" }
+  ]
+}

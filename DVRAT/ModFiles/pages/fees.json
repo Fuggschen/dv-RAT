@@ -1,0 +1,18 @@
+{
+  "id": "fees",
+  "title": "Fees",
+  "parent": "world",
+  "order": 20,
+  "remote": true,
+  "rows": [
+    { "type": "field", "label": "Total", "labelWidth": 180, "value": "${world.feesTotal:N0}", "style": "bold" },
+    { "type": "divider" },
+    { "type": "list", "source": "world.fees", "empty": "No fees to pay.",
+      "columns": [
+        { "text": "{item.id}", "flex": 1 },
+        { "text": "{item.kind}", "width": 80, "style": "dim" },
+        { "text": "not yet", "width": 90, "style": "dim", "when": "!item.payable" },
+        { "text": "${item.price:N0}", "width": 110, "align": "right" }
+      ] }
+  ]
+}

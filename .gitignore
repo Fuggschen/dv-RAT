@@ -1,0 +1,55 @@
+# ===========================
+# R.A.T. (Route Assistant Tablet) .gitignore
+# ===========================
+
+# ---- Build Artifacts ----
+**/bin/
+**/obj/
+**/build/
+**/out/
+
+# ---- NuGet ----
+**/packages/
+*.nupkg
+**/project.lock.json
+
+# ---- IDE / Editor ----
+.vs/
+.vscode/
+*.csproj.user
+*.suo
+*.user
+*.sln.docstates
+.idea/
+*.swp
+*.swo
+*~
+.*/
+
+# ---- OS ----
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---- References (game DLLs, not our code) ----
+References/
+
+# ---- Unity Project (DV-RAT.UnityProject) ----
+# The Unity project is for building asset bundles only.
+# Library, Temp, Logs, obj, and user settings are generated.
+DV-RAT.UnityProject/Library/
+DV-RAT.UnityProject/Temp/
+DV-RAT.UnityProject/Logs/
+DV-RAT.UnityProject/ObjCaptures/
+DV-RAT.UnityProject/UserSettings/
+DV-RAT.UnityProject/MemoryCaptures/
+DV-RAT.UnityProject/Assets/AssetStoreTools/
+
+# ---- Build output DLLs (keep source, not compiled output) ----
+*.dll
+*.pdb
+*.exe
+
+# ---- Large source assets kept outside git ----
+401271__eardeer__toshiba-hdd.wav
+R.A.T.unitypackage

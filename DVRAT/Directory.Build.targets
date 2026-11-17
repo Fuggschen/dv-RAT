@@ -1,0 +1,43 @@
+<Project>
+    <Import Project="GamePaths.props" />
+    <PropertyGroup>
+		<!-- Complete mod folder in the repo root: copy its contents into Mods\DVRAT\. -->
+		<BuildOutputDir>$(MSBuildThisFileDirectory)..\build\</BuildOutputDir>
+		<AssetBundleFile>$(MSBuildThisFileDirectory)..\DV-RAT.UnityProject\Assets\AssetBundles\dvrat_assets</AssetBundleFile>
+    </PropertyGroup>
+
+    <Target Name="CopyToBuildFolder" AfterTargets="Build">
+        <MakeDir Directories="$(BuildOutputDir)" />
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BuildOutputDir)" SkipUnchangedFiles="true" />
+        <ItemGroup>
+            <PageFiles Include="$(MSBuildThisFileDirectory)ModFiles\pages\*.json;$(MSBuildThisFileDirectory)ModFiles\pages\*.md" />
+            <SoundFiles Include="$(MSBuildThisFileDirectory)sounds\*.wav" />
+            <ImageFiles Include="$(MSBuildThisFileDirectory)ModFiles\images\*.png" />
+            <!-- ffmpeg.exe, its license and README, from tools/build-ffmpeg.sh -->
+            <FfmpegFiles Include="$(MSBuildThisFileDirectory)ModFiles\ffmpeg\*" />
+            <!-- Only the README: stations.json belongs to the player and is created by the mod. -->
+            <RadioFiles Include="$(MSBuildThisFileDirectory)ModFiles\radio\README.txt" />
+            <!-- ratcapture.exe for PC Audio, built from RATCapture/ with this configuration, and its README. -->
+            <CaptureFiles Include="$(MSBuildThisFileDirectory)..\RATCapture\bin\$(Configuration)\net48\ratcapture.exe;$(MSBuildThisFileDirectory)..\RATCapture\bin\$(Configuration)\net48\ratcapture.exe.config;$(MSBuildThisFileDirectory)..\RATCapture\README.txt;$(MSBuildThisFileDirectory)..\RATCapture\linux\out\ratcapture-linux;$(MSBuildThisFileDirectory)..\RATCapture\linux\LINUX-TEST.md" />
+            <OutputFolders Include="$(BuildOutputDir)images;$(BuildOutputDir)sounds;$(BuildOutputDir)tablet;$(BuildOutputDir)pages;$(BuildOutputDir)ffmpeg;$(BuildOutputDir)speaker;$(BuildOutputDir)subwoofer;$(BuildOutputDir)radio;$(BuildOutputDir)capture" />
+        </ItemGroup>
+        <!-- Create every target folder once, one after another. When Copy creates them itself it does so
+             from parallel threads, which leaves duplicate folder entries on the WinBtrfs drive. -->
+        <MakeDir Directories="@(OutputFolders->Distinct())" />
+        <Copy SourceFiles="@(ImageFiles)" DestinationFolder="$(BuildOutputDir)images\" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="@(SoundFiles)" DestinationFolder="$(BuildOutputDir)sounds\" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="@(PageFiles)" DestinationFolder="$(BuildOutputDir)pages\" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="@(FfmpegFiles)" DestinationFolder="$(BuildOutputDir)ffmpeg\" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="@(RadioFiles)" DestinationFolder="$(BuildOutputDir)radio\" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="@(CaptureFiles)" Condition="Exists('%(FullPath)')" DestinationFolder="$(BuildOutputDir)capture\" SkipUnchangedFiles="true" />
+        <Warning Condition="!Exists('$(MSBuildThisFileDirectory)ModFiles\ffmpeg\ffmpeg.exe')" Text="No ffmpeg.exe in ModFiles\ffmpeg; build it with tools/build-ffmpeg.sh in WSL. Without it the Media Player plays only mp3, ogg and wav." />
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)Info.json" DestinationFolder="$(BuildOutputDir)" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)tablet\item_info.json" DestinationFolder="$(BuildOutputDir)tablet\" SkipUnchangedFiles="true" />
+        <!-- Their prefabs are in the tablet's bundle; each item_info.json points at ../tablet/dvrat_assets. -->
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)speaker\item_info.json" DestinationFolder="$(BuildOutputDir)speaker\" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)subwoofer\item_info.json" DestinationFolder="$(BuildOutputDir)subwoofer\" SkipUnchangedFiles="true" />
+        <!-- The bundle comes from Unity's "Build AssetBundles" menu; rebuild it there after prefab changes. -->
+        <Copy Condition="Exists('$(AssetBundleFile)')" SourceFiles="$(AssetBundleFile)" DestinationFolder="$(BuildOutputDir)tablet\" SkipUnchangedFiles="true" />
+        <Warning Condition="!Exists('$(AssetBundleFile)')" Text="No asset bundle at $(AssetBundleFile); build it in Unity with Assets > Build AssetBundles." />
+    </Target>
+</Project>

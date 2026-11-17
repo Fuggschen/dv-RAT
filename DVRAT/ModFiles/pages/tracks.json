@@ -1,0 +1,32 @@
+{
+  "id": "tracks",
+  "title": "Yard",
+  "parent": "yard",
+  "order": 10,
+  "openLabel": "Tracks",
+  "vars": { "tab": "tracks" },
+  "rows": [
+    { "type": "text", "style": "dim", "text": "No station loaded.", "when": "!station.known" },
+    { "type": "buttons", "label": "Station", "labelWidth": 70, "when": "station.known",
+      "buttons": [
+        { "label": "{station.name}  {station.distance}", "set": { "tab": "pick" }, "selectedWhen": "page.tab=pick" }
+      ] },
+
+    { "type": "buttons", "when": "page.tab=pick",
+      "buttons": [
+        { "label": "Nearest station", "set": { "settings.station": "", "tab": "tracks" }, "selectedWhen": "!station.picked" }
+      ] },
+    { "type": "list", "source": "station.all", "when": "page.tab=pick", "empty": "No stations loaded.",
+      "click": { "set": { "settings.station": "{item.id}", "tab": "tracks" } },
+      "columns": [
+        { "header": "Station", "text": "{item.name}", "flex": 1 },
+        { "header": "ID", "text": "{item.id}", "width": 70 },
+        { "header": "Distance", "text": "{item.distance}", "width": 100, "align": "right" }
+      ] },
+
+    { "type": "widget", "name": "tracks", "when": "page.tab!=pick" }
+  ],
+  "softKeys": [
+    { "label": "Tracks", "set": { "tab": "tracks" }, "when": "page.tab=pick" }
+  ]
+}

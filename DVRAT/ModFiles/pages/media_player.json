@@ -1,0 +1,9 @@
+{
+  "id": "media_player",
+  "title": "Media Player",
+  "parent": "tools",
+  "order": 10,
+  "rows": [
+    { "type": "widget", "name": "mediaPlayer" }
+  ]
+}

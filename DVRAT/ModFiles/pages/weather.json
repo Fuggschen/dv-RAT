@@ -1,0 +1,20 @@
+{
+  "id": "weather",
+  "title": "Weather",
+  "parent": "world",
+  "order": 40,
+  "remote": true,
+  "rows": [
+    { "type": "field", "label": "Now", "labelWidth": 160, "value": "{weather.now}", "when": "weather.now" },
+    { "type": "field", "label": "Temperature", "labelWidth": 160, "value": "{seasons.temp}", "when": "seasons.ready" },
+    { "type": "field", "label": "Season", "labelWidth": 160, "value": "{seasons.season}", "when": "seasons.ready && !seasons.changing" },
+    { "type": "field", "label": "Season", "labelWidth": 160, "value": "{seasons.season}, turning to {seasons.next} ({seasons.transitionPct:F0} %)",
+      "when": "seasons.changing" },
+    { "type": "field", "label": "Snow cover", "labelWidth": 160, "value": "{seasons.snowPct:F0} %", "when": "seasons.ready" },
+    { "type": "text", "text": "{seasons.blizzard}", "when": "seasons.blizzard" },
+    { "type": "text", "style": "dim", "text": "Waiting for DVSeasons...", "when": "seasons.installed && !seasons.ready" },
+    { "type": "divider" },
+    { "type": "heading", "text": "Forecast for Today", "when": "weather.available" },
+    { "type": "widget", "name": "forecast" }
+  ]
+}

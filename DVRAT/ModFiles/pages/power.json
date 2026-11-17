@@ -1,0 +1,39 @@
+{
+  "id": "power",
+  "title": "Power",
+  "parent": "train",
+  "order": 30,
+  "vars": { "tab": "cars" },
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Loading train data...", "when": "!train.loaded" },
+    { "type": "text", "style": "dim", "text": "Solar Gadgets is not installed.", "when": "train.loaded && !solar.installed" },
+    { "type": "text", "style": "dim", "text": "No car of this train has solar panels, batteries or a simulated loco battery.",
+      "when": "solar.installed && !solar.present" },
+
+    { "type": "list", "source": "solar.cars", "when": "solar.present && page.tab=cars", "empty": "No cars with power.",
+      "columns": [
+        { "header": "Car", "text": "{item.id}", "width": 90 },
+        { "header": "Charge", "text": "{item.charge}", "width": 70, "align": "right" },
+        { "header": "Rate", "text": "{item.rate}", "flex": 1, "warnWhen": "item.ratePctH < 0" },
+        { "header": "Supply / demand", "text": "{item.supply} / {item.demand}", "width": 180, "align": "right" }
+      ] },
+    { "type": "list", "source": "solar.batteries", "when": "solar.present && page.tab=batteries", "empty": "No batteries in this train.",
+      "columns": [
+        { "header": "Car", "text": "{item.car}", "width": 90 },
+        { "header": "Battery", "text": "{item.name}", "flex": 1 },
+        { "header": "Charge", "text": "{item.charge}", "width": 110, "align": "right", "warnWhen": "item.soldered && item.chargePct < 20" },
+        { "header": "Capacity", "text": "{item.capacity}", "width": 130, "align": "right" }
+      ] },
+    { "type": "list", "source": "solar.consumers", "when": "solar.present && page.tab=consumers", "empty": "Nothing draws power.",
+      "columns": [
+        { "header": "Car", "text": "{item.car}", "width": 90 },
+        { "header": "Consumer", "text": "{item.name}", "flex": 1 },
+        { "header": "Draw", "text": "{item.draw}", "width": 120, "align": "right" }
+      ] }
+  ],
+  "softKeys": [
+    { "label": "Cars", "set": { "tab": "cars" }, "when": "solar.present && page.tab!=cars" },
+    { "label": "Batteries", "set": { "tab": "batteries" }, "when": "solar.present && page.tab!=batteries" },
+    { "label": "Consumers", "set": { "tab": "consumers" }, "when": "solar.present && page.tab!=consumers" }
+  ]
+}

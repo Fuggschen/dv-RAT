@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- ratcapture.exe: the tablet's helper for playing a Windows program's sound (Spotify, a browser) in the game,
+       through Windows' process loopback and media controls. A process of its own, like ffmpeg.exe, so a failing
+       COM call cannot take the game down. .NET Framework 4.8 ships with Windows 10 and 11. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>ratcapture</AssemblyName>
+    <RootNamespace>RatCapture</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Windows' WinRT API (media controls) for .NET Framework desktop programs. -->
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
+  </ItemGroup>
+
+</Project>

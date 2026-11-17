@@ -1,0 +1,10 @@
+{
+  "id": "jobs",
+  "title": "Jobs",
+  "order": 40,
+  "remote": true,
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Loading jobs...", "when": "!jobs.loaded" },
+    { "type": "widget", "name": "jobs", "when": "jobs.loaded" }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": "yard",
+  "title": "Station",
+  "order": 45,
+  "openLabel": "Station Jobs",
+  "remote": true,
+  "vars": { "tab": "jobs", "sort": "item.pay", "desc": "true", "hideTypes": "", "hideDestinations": "", "showUnlicensed": "false", "selected": "" },
+  "rows": [
+    { "type": "text", "style": "dim", "text": "No station loaded.", "when": "!station.known" },
+    { "type": "buttons", "label": "Station", "labelWidth": 70, "when": "station.known",
+      "buttons": [
+        { "label": "{station.name}  {station.distance}", "set": { "tab": "pick" }, "selectedWhen": "page.tab=pick" }
+      ] },
+    { "type": "text", "style": "dim", "text": "Drive into the station to see the jobs it offers.", "when": "station.known && !station.jobsKnown && page.tab=jobs" },
+
+    { "type": "buttons", "when": "page.tab=pick",
+      "buttons": [
+        { "label": "Nearest station", "set": { "settings.station": "", "tab": "jobs" }, "selectedWhen": "!station.picked" }
+      ] },
+    { "type": "list", "source": "station.all", "when": "page.tab=pick", "empty": "No stations loaded.",
+      "click": { "set": { "settings.station": "{item.id}", "tab": "jobs" } },
+      "columns": [
+        { "header": "Station", "text": "{item.name}", "flex": 1 },
+        { "header": "ID", "text": "{item.id}", "width": 70 },
+        { "header": "Distance", "text": "{item.distance}", "width": 100, "align": "right" }
+      ] },
+
+    { "type": "buttons", "label": "Sort", "when": "station.jobsKnown && page.tab=jobs",
+      "buttons": [
+        { "label": "Type", "set": { "sort": "item.typeShort", "desc": "false" }, "selectedWhen": "page.sort=item.typeShort" },
+        { "label": "From", "set": { "sort": "item.fromTrack", "desc": "false" }, "selectedWhen": "page.sort=item.fromTrack" },
+        { "label": "To", "set": { "sort": "item.toTrack", "desc": "false" }, "selectedWhen": "page.sort=item.toTrack" },
+        { "label": "Length", "set": { "sort": "item.lengthM", "desc": "true" }, "selectedWhen": "page.sort=item.lengthM" },
+        { "label": "Weight", "set": { "sort": "item.massT", "desc": "true" }, "selectedWhen": "page.sort=item.massT" },
+        { "label": "Pay", "set": { "sort": "item.pay", "desc": "true" }, "selectedWhen": "page.sort=item.pay" },
+        { "label": "$/min", "set": { "sort": "item.payPerMin", "desc": "true" }, "selectedWhen": "page.sort=item.payPerMin" },
+        { "label": "High first", "set": { "desc": "false" }, "when": "page.desc=true" },
+        { "label": "Low first", "set": { "desc": "true" }, "when": "page.desc!=true" }
+      ] },
+    { "type": "list", "source": "station.jobs", "when": "station.jobsKnown && page.tab=jobs", "empty": "No jobs match the filter.",
+      "var": "selected", "value": "{item.id}",
+      "filter": "item.typeShort !in page.hideTypes && item.toId !in page.hideDestinations && !item.missingLicenses || item.typeShort !in page.hideTypes && item.toId !in page.hideDestinations && page.showUnlicensed=true",
+      "sort": "{page.sort}", "descending": "{page.desc}",
+      "columns": [
+        { "header": "Job", "text": "{item.id}", "width": 85, "warnWhen": "item.missingLicenses" },
+        { "header": "Type", "text": "{item.typeShort}", "width": 35, "warnWhen": "item.missingLicenses" },
+        { "header": "Licenses", "text": "{item.licenses}", "width": 95, "warnWhen": "item.missingLicenses" },
+        { "header": "From > To", "text": "{item.fromTrack} > {item.toTrack}", "flex": 1 },
+        { "header": "Length", "text": "{item.lengthM:F0} m", "width": 55, "align": "right" },
+        { "header": "Weight", "text": "{item.massT:F0} t", "width": 55, "align": "right" },
+        { "header": "Pay", "text": "${item.pay:F0}", "width": 60, "align": "right" },
+        { "header": "$/min", "text": "{item.payPerMin:$0/min;-0;--}", "width": 75, "align": "right" },
+        { "header": "Plan", "text": "yes", "width": 40, "align": "right", "style": "highlight", "when": "item.active" }
+      ] },
+
+    { "type": "widget", "name": "job", "var": "selected", "when": "page.tab=info" },
+
+    { "type": "heading", "text": "Job type", "when": "station.jobsKnown && page.tab=filter" },
+    { "type": "checklist", "source": "station.jobTypes", "var": "hideTypes", "value": "{item.id}", "text": "{item.id}",
+      "when": "station.jobsKnown && page.tab=filter", "empty": "No jobs offered." },
+    { "type": "heading", "text": "Licenses", "when": "station.jobsKnown && page.tab=filter" },
+    { "type": "buttons", "when": "station.jobsKnown && page.tab=filter",
+      "buttons": [
+        { "label": "[ ] Show jobs I have no license for", "set": { "showUnlicensed": "true" }, "when": "page.showUnlicensed!=true" },
+        { "label": "[x] Show jobs I have no license for (in red)", "set": { "showUnlicensed": "false" }, "when": "page.showUnlicensed=true" }
+      ] },
+    { "type": "heading", "text": "Destination", "when": "station.jobsKnown && page.tab=filter" },
+    { "type": "checklist", "source": "station.destinations", "var": "hideDestinations", "value": "{item.id}", "text": "{item.id}",
+      "when": "station.jobsKnown && page.tab=filter", "empty": "No jobs offered." },
+    { "type": "buttons", "when": "station.jobsKnown && page.tab=filter",
+      "buttons": [
+        { "label": "Tick all job types and destinations", "set": { "hideTypes": "", "hideDestinations": "" },
+          "enabledWhen": "page.hideTypes || page.hideDestinations" }
+      ] }
+  ],
+  "softKeys": [
+    { "label": "Jobs", "set": { "tab": "jobs" }, "when": "page.tab!=jobs" },
+    { "label": "Filter", "set": { "tab": "filter" }, "when": "page.tab=jobs" },
+    { "label": "Show info", "set": { "tab": "info" }, "when": "station.jobsKnown && page.tab=jobs", "enabledWhen": "page.selected.count=1" },
+    { "label": "To planner", "planJobs": "{page.selected}", "set": { "selected": "" }, "link": "jobs", "linkVars": { "jobsTab": "Plan" },
+      "when": "station.jobsKnown && page.tab=jobs", "enabledWhen": "page.selected" }
+  ]
+}

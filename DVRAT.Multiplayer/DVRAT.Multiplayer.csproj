@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    R.A.T.'s part that uses the Multiplayer mod's API. DVRAT.dll never references the API, so R.A.T. loads without
+    Multiplayer; it loads this DLL itself when Multiplayer is there (see MultiplayerSync, the wiki's "Shim With
+    Integration"). Ships next to DVRAT.dll; MultiplayerAPI.dll comes from the Multiplayer mod and is never shipped.
+  -->
+  <Import Project="..\DVRAT\GamePaths.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>DVRAT.Multiplayer</AssemblyName>
+    <RootNamespace>DVRAT.Multiplayer</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <BuildOutputDir>$(MSBuildThisFileDirectory)..\build\</BuildOutputDir>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>false</Private>
+    </Reference>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DVRAT\DVRAT.csproj" Private="false" />
+    <PackageReference Include="DVMultiplayerAPI" Version="1.1.0" ExcludeAssets="runtime" PrivateAssets="all" />
+    <Reference Include="Assembly-CSharp" />
+    <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.AudioModule" />
+    <Reference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <Target Name="CopyToBuildFolder" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BuildOutputDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

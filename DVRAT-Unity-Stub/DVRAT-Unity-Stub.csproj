@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- Must match the real mod assembly: bundles store script references by assembly name. -->
+    <AssemblyName>DVRAT</AssemblyName>
+    <RootNamespace>DVRAT</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <UnityInstallDir>C:\Program Files\Unity\Hub\Editor\2019.4.40f1\Editor</UnityInstallDir>
+    <UnityManagedDir>$(UnityInstallDir)\Data\Managed\UnityEngine</UnityManagedDir>
+    <UnityProjectDir>..\DV-RAT.UnityProject</UnityProjectDir>
+    <UnityScriptAssemblies>$(UnityProjectDir)\Library\ScriptAssemblies</UnityScriptAssemblies>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>false</Private>
+    </Reference>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <Reference Include="UnityEngine" HintPath="$(UnityManagedDir)\UnityEngine.dll" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(UnityManagedDir)\UnityEngine.CoreModule.dll" />
+    <Reference Include="UnityEngine.UI" HintPath="$(UnityScriptAssemblies)\UnityEngine.UI.dll" />
+    <Reference Include="UnityEngine.AudioModule" HintPath="$(UnityManagedDir)\UnityEngine.AudioModule.dll" />
+    <Reference Include="UnityEngine.UIModule" HintPath="$(UnityManagedDir)\UnityEngine.UIModule.dll" />
+    <Reference Include="UnityEngine.VideoModule" HintPath="$(UnityManagedDir)\UnityEngine.VideoModule.dll" />
+    <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(UnityManagedDir)\UnityEngine.TextRenderingModule.dll" />
+    <Reference Include="UnityEngine.InputLegacyModule" HintPath="$(UnityManagedDir)\UnityEngine.InputLegacyModule.dll" />
+  </ItemGroup>
+
+</Project>

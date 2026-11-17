@@ -1,0 +1,46 @@
+{
+  "id": "electric",
+  "title": "Electric",
+  "parent": "loco",
+  "order": 20,
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Loading train data...", "when": "!train.loaded" },
+    { "type": "text", "style": "dim", "text": "This locomotive does not run on the overhead wire.", "when": "train.loaded && !electric.present" },
+
+    { "type": "heading", "text": "Supply", "when": "electric.present && !electric.onBattery" },
+    { "type": "bar", "labelWidth": 160, "label": "Line voltage", "value": "electric.voltageV", "max": "2000",
+      "text": "{electric.voltage}", "warnWhen": "electric.offWire", "when": "electric.present && !electric.onBattery" },
+    { "type": "field", "labelWidth": 160, "label": "Built for", "value": "{electric.nominal}", "when": "electric.hasNominal && !electric.onBattery" },
+    { "type": "pairs", "labelWidth": 100, "when": "electric.present && !electric.onBattery",
+      "items": [ ["Current", "{electric.current}"], ["Power", "{electric.power}"] ] },
+    { "type": "field", "labelWidth": 160, "label": "Battery level", "value": "{electric.batteryLevel}",
+      "when": "electric.hasBattery && !electric.onBattery" },
+
+    { "type": "heading", "text": "Traction battery", "when": "electric.onBattery" },
+    { "type": "bar", "labelWidth": 160, "label": "Battery voltage", "value": "electric.batteryVoltageV", "max": "450",
+      "text": "{electric.batteryVoltage}", "when": "electric.onBattery" },
+    { "type": "bar", "labelWidth": 160, "label": "Battery level", "value": "electric.batteryLevelPct",
+      "text": "{electric.batteryLevel}", "warnWhen": "electric.batteryLevelPct < 20", "when": "electric.onBattery" },
+    { "type": "pairs", "labelWidth": 100, "when": "electric.onBattery",
+      "items": [ ["Current", "{electric.batteryCurrent}"], ["Power", "{electric.batteryPower}"] ] },
+
+    { "type": "field", "labelWidth": 160, "label": "Energy used", "value": "{electric.energy}", "when": "electric.hasEnergy" },
+    { "type": "text", "text": "Regenerating: the motors feed power back into the wire.", "when": "electric.regenerating && !electric.onBattery" },
+    { "type": "text", "text": "No raised pantograph touches a wire.", "style": "warning", "when": "electric.offWire && !electric.onBattery" },
+
+    { "type": "divider", "when": "electric.hasMotorTemperature || electric.hasWorkingMotors" },
+    { "type": "heading", "text": "Traction motors", "when": "electric.hasMotorTemperature || electric.hasWorkingMotors" },
+    { "type": "field", "labelWidth": 160, "label": "Temperature", "value": "{electric.motorTemperature}", "when": "electric.hasMotorTemperature" },
+    { "type": "field", "labelWidth": 160, "label": "Working", "value": "{electric.workingMotors}", "when": "electric.hasWorkingMotors" },
+
+    { "type": "divider", "when": "electric.present" },
+    { "type": "heading", "text": "Pantographs", "when": "electric.present" },
+    { "type": "text", "style": "dim", "text": "This locomotive does not report its pantographs.", "when": "electric.present && !electric.pantographsReported" },
+    { "type": "list", "source": "electric.pantographs", "when": "electric.pantographsReported", "empty": "No pantographs found.",
+      "columns": [
+        { "header": "Pantograph", "text": "{item.name}", "flex": 1 },
+        { "header": "Raised", "text": "{item.raised}", "width": 90, "align": "right" },
+        { "header": "Wire", "text": "{item.wire}", "width": 130, "align": "right", "warnWhen": "item.raisedPct > 95 && !item.contact" }
+      ] }
+  ]
+}

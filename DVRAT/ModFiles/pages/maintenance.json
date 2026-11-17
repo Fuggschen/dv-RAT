@@ -1,0 +1,53 @@
+{
+  "id": "maintenance",
+  "title": "Maintenance",
+  "parent": "tracks",
+  "order": 10,
+  "vars": { "tab": "switches", "back": "switches" },
+  "rows": [
+    { "type": "text", "style": "dim", "text": "No station loaded.", "when": "!station.known" },
+    { "type": "buttons", "label": "Station", "labelWidth": 70, "when": "station.known",
+      "buttons": [
+        { "label": "{station.name}  {station.distance}", "set": { "tab": "pick" }, "selectedWhen": "page.tab=pick" }
+      ] },
+
+    { "type": "buttons", "when": "page.tab=pick",
+      "buttons": [
+        { "label": "Nearest station", "set": { "settings.station": "", "tab": "{page.back}" }, "selectedWhen": "!station.picked" }
+      ] },
+    { "type": "list", "source": "station.all", "when": "page.tab=pick", "empty": "No stations loaded.",
+      "click": { "set": { "settings.station": "{item.id}", "tab": "{page.back}" } },
+      "columns": [
+        { "header": "Station", "text": "{item.name}", "flex": 1 },
+        { "header": "ID", "text": "{item.id}", "width": 70 },
+        { "header": "Distance", "text": "{item.distance}", "width": 100, "align": "right" }
+      ] },
+
+    { "type": "text", "style": "dim", "text": "Switch damage comes from the Junction Maintenance mod, which is not loaded.",
+      "when": "station.known && !station.switchesKnown && page.tab=switches" },
+    { "type": "field", "label": "Damaged", "labelWidth": 100, "value": "{station.damagedSwitches} of {station.switches.count} switches",
+      "when": "station.switchesKnown && page.tab=switches" },
+    { "type": "list", "source": "station.switches", "when": "station.switchesKnown && page.tab=switches",
+      "empty": "This station has no switches.",
+      "columns": [
+        { "header": "Switch", "text": "{item.id}", "flex": 1, "warnWhen": "item.damaged" },
+        { "header": "State", "text": "{item.state}", "width": 140, "warnWhen": "item.locked" },
+        { "header": "Damage", "text": "{item.damagePct} %", "width": 90, "align": "right", "warnWhen": "item.damaged" }
+      ] },
+
+    { "type": "text", "style": "dim", "text": "Track damage comes from the Track Maintenance mod, which is not loaded.",
+      "when": "station.known && !station.trackDamageKnown && page.tab=tracks" },
+    { "type": "list", "source": "station.trackDamage", "when": "station.trackDamageKnown && page.tab=tracks",
+      "empty": "No track of this station is damaged.",
+      "columns": [
+        { "header": "Track", "text": "{item.track}", "flex": 1 },
+        { "header": "Section", "text": "{item.range}", "width": 120, "align": "right" },
+        { "header": "Damage", "text": "{item.damagePct} %", "width": 90, "align": "right" },
+        { "header": "V max", "text": "{item.limit}", "width": 100, "align": "right", "warnWhen": "item.hasLimit" }
+      ] }
+  ],
+  "softKeys": [
+    { "label": "Switches", "set": { "tab": "switches", "back": "switches" }, "enabledWhen": "page.tab!=switches" },
+    { "label": "Track damage", "set": { "tab": "tracks", "back": "tracks" }, "enabledWhen": "page.tab!=tracks" }
+  ]
+}

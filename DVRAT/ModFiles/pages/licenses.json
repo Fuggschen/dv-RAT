@@ -1,0 +1,13 @@
+{
+  "id": "licenses",
+  "title": "Licenses",
+  "parent": "world",
+  "order": 10,
+  "rows": [
+    { "type": "list", "source": "world.licenses", "empty": "No licenses.",
+      "columns": [
+        { "text": "{item.name}", "flex": 1 },
+        { "text": "{item.kind}", "width": 100, "style": "dim" }
+      ] }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "supplies",
+  "title": "Supplies",
+  "parent": "loco",
+  "order": 10,
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Loading train data...", "when": "!train.loaded" },
+    { "type": "text", "style": "dim", "text": "No locomotive in this train.", "when": "train.loaded && !loco.present" },
+
+    { "type": "heading", "text": "Resources", "when": "loco.present" },
+    { "type": "bar", "labelWidth": 220, "label": "Fuel", "value": "loco.fuel.pct", "text": "{loco.fuel.amount:F0} / {loco.fuel.capacity:F0}", "warnWhen": "loco.fuel.pct < 15", "when": "loco.fuel.has" },
+    { "type": "field", "style": "dim", "labelWidth": 220, "label": "Fuel use", "value": "{loco.fuel.perMin:F1} /min, about {loco.fuel.timeLeft} left", "when": "loco.fuel.draining" },
+    { "type": "bar", "labelWidth": 220, "label": "Oil", "value": "loco.oil.pct", "text": "{loco.oil.pct:F0} %", "warnWhen": "loco.oil.pct < 15", "when": "loco.oil.has" },
+    { "type": "field", "style": "dim", "labelWidth": 220, "label": "Oil use", "value": "{loco.oil.pctPerMin:F2} %/min, about {loco.oil.timeLeft} left", "when": "loco.oil.draining" },
+    { "type": "bar", "labelWidth": 220, "label": "Sand", "value": "loco.sand.pct", "text": "{loco.sand.pct:F0} %", "warnWhen": "loco.sand.pct < 15", "when": "loco.sand.has" },
+    { "type": "field", "style": "dim", "labelWidth": 220, "label": "Sand use", "value": "{loco.sand.pctPerMin:F2} %/min, about {loco.sand.timeLeft} left", "when": "loco.sand.draining" },
+    { "type": "bar", "labelWidth": 220, "label": "Water", "value": "loco.water.pct", "text": "{loco.water.amount:F0} / {loco.water.capacity:F0}", "warnWhen": "loco.water.pct < 15", "when": "loco.water.has" },
+    { "type": "field", "style": "dim", "labelWidth": 220, "label": "Water use", "value": "{loco.water.perMin:F1} /min, about {loco.water.timeLeft} left", "when": "loco.water.draining" },
+    { "type": "bar", "labelWidth": 220, "label": "Coal", "value": "loco.coal.pct", "text": "{loco.coal.amount:F0} / {loco.coal.capacity:F0}", "warnWhen": "loco.coal.pct < 15", "when": "loco.coal.has" },
+    { "type": "field", "style": "dim", "labelWidth": 220, "label": "Coal use", "value": "{loco.coal.perMin:F1} /min, about {loco.coal.timeLeft} left", "when": "loco.coal.draining" },
+    { "type": "bar", "labelWidth": 220, "label": "Battery", "value": "loco.charge.pct", "text": "{loco.charge.pct:F0} %", "warnWhen": "loco.charge.pct < 15", "when": "loco.charge.has" },
+    { "type": "field", "style": "dim", "labelWidth": 220, "label": "Battery use", "value": "{loco.charge.pctPerMin:F2} %/min, about {loco.charge.timeLeft} left", "when": "loco.charge.draining" },
+
+    { "type": "divider", "when": "loco.hasEngine || loco.hasBoiler" },
+    { "type": "field", "label": "Engine", "labelWidth": 220, "value": "{loco.engine}, {loco.rpm:F0} rpm", "when": "loco.hasEngine" },
+    { "type": "field", "label": "Temperature", "labelWidth": 220, "value": "{loco.temperatureC:F0} °C", "when": "loco.hasTemperature" },
+    { "type": "field", "label": "Boiler pressure", "labelWidth": 220, "value": "{loco.boilerBar:F1} bar", "when": "loco.hasBoiler" },
+    { "type": "bar", "labelWidth": 220, "label": "Boiler water", "value": "loco.boilerWaterPct", "text": "{loco.boilerWaterPct:F0} %", "warnWhen": "loco.boilerWaterPct < 30 || loco.boilerWaterPct > 90", "when": "loco.hasBoiler" },
+    { "type": "field", "label": "Fire", "labelWidth": 220, "value": "{loco.fireboxC:F0} °C", "when": "loco.fireOn" },
+    { "type": "field", "label": "Fire", "labelWidth": 220, "value": "out", "when": "loco.hasFirebox && !loco.fireOn" }
+  ],
+  "softKeys": [
+    { "label": "Sim ports", "link": "loco_ports", "when": "loco.present" }
+  ]
+}

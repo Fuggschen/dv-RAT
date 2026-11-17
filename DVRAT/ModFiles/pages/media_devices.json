@@ -1,0 +1,10 @@
+{
+  "id": "media_devices",
+  "title": "Devices",
+  "parent": "media_player",
+  "startMenu": false,
+  "order": 10,
+  "rows": [
+    { "type": "widget", "name": "mediaDevices" }
+  ]
+}

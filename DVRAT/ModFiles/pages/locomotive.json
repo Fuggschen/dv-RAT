@@ -1,0 +1,47 @@
+{
+  "id": "loco",
+  "title": "Locomotive",
+  "parent": "train",
+  "order": 20,
+  "openLabel": "Overview",
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Loading train data...", "when": "!train.loaded" },
+    { "type": "text", "style": "dim", "text": "No locomotive in this train.", "when": "train.loaded && !loco.present" },
+
+    { "type": "field", "label": "Type", "labelWidth": 220, "value": "{loco.name}", "when": "loco.present" },
+    { "type": "field", "label": "Engine", "labelWidth": 220, "value": "{loco.engine}", "when": "loco.hasEngine" },
+    { "type": "field", "label": "Fees", "labelWidth": 220, "value": "{loco.fee}", "when": "loco.hasFee && !loco.feeIsService" },
+    { "type": "field", "label": "Service", "labelWidth": 220, "value": "{loco.fee}", "when": "loco.hasFee && loco.feeIsService" },
+
+    { "type": "divider", "when": "loco.present" },
+    { "type": "heading", "text": "Controls", "when": "loco.present" },
+    { "type": "pairs", "labelWidth": 100, "when": "loco.present",
+      "items": [ ["Throttle", "{loco.throttle}"], ["Reverser", "{loco.reverser}"], ["Cutoff", "{loco.cutoff}"] ] },
+    { "type": "pairs", "labelWidth": 100, "when": "loco.present",
+      "items": [ ["Train brake", "{loco.trainBrake}"], ["Ind. brake", "{loco.independentBrake}"], ["Handbrake", "{loco.handbrake}"] ] },
+
+    { "type": "divider", "when": "loco.hasTraction" },
+    { "type": "heading", "text": "Traction", "when": "loco.hasTraction" },
+    { "type": "pairs", "labelWidth": 100, "when": "loco.hasTraction",
+      "items": [ ["Force", "{loco.tractiveEffortKn:F0} kN"], ["Power", "{loco.powerKw:F0} kW"], ["Adhesion", "{loco.adhesionKn:F0} kN"] ] },
+    { "type": "pairs", "labelWidth": 100, "when": "loco.hasTraction",
+      "items": [ ["Wheelslip", "{loco.slipPct:F0} %"], ["Wheelslide", "{loco.slidePct:F0} %"] ] },
+    { "type": "bar", "labelWidth": 100, "label": "TM heat", "value": "loco.tmTemperatureC", "max": "loco.tmOverheatC",
+      "text": "{loco.tmTemperature} / {loco.tmOverheatC:F0} °C", "warnWhen": "loco.tmTemperatureC > loco.tmOverheatC",
+      "when": "loco.hasTmTemperature" },
+
+    { "type": "divider", "when": "loco.present" },
+    { "type": "heading", "text": "Pressures", "when": "loco.present" },
+    { "type": "pairs", "labelWidth": 100, "when": "loco.present",
+      "items": [
+        ["Brake pipe", "{loco.brakePipeBar:F1} bar"],
+        ["Main res.", "{loco.mainReservoirBar:F1} bar"],
+        ["Brake cyl.", "{loco.brakeCylinderBar:F1} bar"]
+      ] },
+    { "type": "pairs", "labelWidth": 100, "when": "loco.hasDriverValve",
+      "items": [ ["Driver valve", "{loco.driverValve}"], ["Equalizing", "{loco.equalizing}"] ] }
+  ],
+  "softKeys": [
+    { "label": "Type info", "link": "car:{loco.type}", "when": "loco.present" }
+  ]
+}

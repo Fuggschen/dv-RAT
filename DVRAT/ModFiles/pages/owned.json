@@ -1,0 +1,18 @@
+{
+  "id": "owned",
+  "title": "Owned locos",
+  "parent": "world",
+  "order": 30,
+  "remote": true,
+  "rows": [
+    { "type": "list", "source": "world.owned", "empty": "You own no vehicles.",
+      "columns": [
+        { "text": "{item.id}", "width": 110 },
+        { "text": "{item.name}", "width": 150 },
+        { "text": "{item.track}", "flex": 1 },
+        { "text": "{item.distance}", "width": 90, "align": "right" },
+        { "text": "destroyed", "width": 100, "style": "warning", "when": "item.destroyed" },
+        { "text": "${item.servicePrice:N0}", "width": 100, "align": "right", "when": "!item.destroyed" }
+      ] }
+  ]
+}

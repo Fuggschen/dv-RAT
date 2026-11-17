@@ -1,0 +1,19 @@
+{
+  "id": "route",
+  "title": "Route",
+  "order": 30,
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Scanning track...", "when": "!route.loaded" },
+    { "type": "text", "style": "dim", "text": "You are not on a train.", "when": "route.loaded && !route.onTrack && !train.derailed" },
+    { "type": "text", "style": "warning", "text": "Derailed: the route ahead is shown again once the train is back on the rails.",
+      "when": "route.loaded && !route.onTrack && train.derailed" },
+
+    { "type": "pairs", "labelWidth": 80, "when": "route.onTrack",
+      "items": [ ["Train", "{train.number}"], ["Track", "{route.track}"], ["Delay", "{route.delay}"] ] },
+    { "type": "pairs", "labelWidth": 80, "when": "route.onTrack",
+      "items": [ ["Length", "{train.lengthM:F0} m"], ["Mass", "{train.massT:F0} t"], ["Next", "{route.next}"] ] },
+    { "type": "pairs", "labelWidth": 80, "when": "route.onTrack",
+      "items": [ ["V max", "{route.limit}"], ["Grade", "{route.grade}"], ["Dest.", "{route.destination}"] ] },
+    { "type": "widget", "name": "timetable", "rows": 8, "when": "route.onTrack" }
+  ]
+}

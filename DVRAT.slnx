@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="DVRAT-Unity-Stub/DVRAT-Unity-Stub.csproj" />
+  <Project Path="DVRAT.Tests/DVRAT.Tests.csproj" />
+  <Project Path="DVRAT/DVRAT.csproj" />
+  <Project Path="DVRAT.Multiplayer/DVRAT.Multiplayer.csproj" />
+  <Project Path="DVRAT.Opus/DVRAT.Opus.csproj" />
+  <Project Path="RATCapture/RATCapture.csproj" />
+</Solution>

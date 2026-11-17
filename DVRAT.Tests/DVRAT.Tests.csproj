@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Links the Unity-free source files of the mod directly, so tests run without game or Unity DLLs. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\DVRAT\UI\Shell\Navigator.cs" Link="Linked\Navigator.cs" />
+    <Compile Include="..\DVRAT\Content\InfoPageData.cs" Link="Linked\InfoPageData.cs" />
+    <Compile Include="..\DVRAT\Content\LinkParser.cs" Link="Linked\LinkParser.cs" />
+    <Compile Include="..\DVRAT\Content\ContentStore.cs" Link="Linked\ContentStore.cs" />
+    <Compile Include="..\DVRAT\Content\ContentIds.cs" Link="Linked\ContentIds.cs" />
+    <Compile Include="..\DVRAT\Data\Planning\TrackGraph.cs" Link="Linked\TrackGraph.cs" />
+    <Compile Include="..\DVRAT\Data\Planning\StationDistances.cs" Link="Linked\StationDistances.cs" />
+    <Compile Include="..\DVRAT\Data\Planning\ShuntingPlanner.cs" Link="Linked\ShuntingPlanner.cs" />
+    <Compile Include="..\DVRAT\Data\Planning\PlanProgress.cs" Link="Linked\PlanProgress.cs" />
+    <Compile Include="..\DVRAT\Data\Route\RouteProfile.cs" Link="Linked\RouteProfile.cs" />
+    <Compile Include="..\DVRAT\Data\Route\SpeedHistory.cs" Link="Linked\SpeedHistory.cs" />
+    <Compile Include="..\DVRAT\Data\Route\EventHistory.cs" Link="Linked\EventHistory.cs" />
+    <Compile Include="..\DVRAT\Data\Route\TrackStretches.cs" Link="Linked\TrackStretches.cs" />
+    <Compile Include="..\DVRAT\Data\Route\SpeedRestrictions.cs" Link="Linked\SpeedRestrictions.cs" />
+    <Compile Include="..\DVRAT\Content\Pages\Template.cs" Link="Linked\Template.cs" />
+    <Compile Include="..\DVRAT\Content\Pages\PageDefinition.cs" Link="Linked\PageDefinition.cs" />
+    <Compile Include="..\DVRAT\Content\Pages\PageBindings.cs" Link="Linked\PageBindings.cs" />
+    <Compile Include="..\DVRAT\Content\Pages\Expression.cs" Link="Linked\Expression.cs" />
+    <Compile Include="..\DVRAT\Content\Pages\ListQuery.cs" Link="Linked\ListQuery.cs" />
+    <Compile Include="..\DVRAT\Data\TabletSession.cs" Link="Linked\TabletSession.cs" />
+    <Compile Include="..\DVRAT\Data\ResourceRates.cs" Link="Linked\ResourceRates.cs" />
+    <Compile Include="..\DVRAT\Data\SignalLoad.cs" Link="Linked\SignalLoad.cs" />
+    <Compile Include="..\DVRAT\UI\Kit\Format.cs" Link="Linked\Format.cs" />
+    <Compile Include="..\DVRAT\UI\Kit\Pagination.cs" Link="Linked\Pagination.cs" />
+    <Compile Include="..\DVRAT\UI\Kit\SoftKeySlots.cs" Link="Linked\SoftKeySlots.cs" />
+    <Compile Include="..\DVRAT\Data\Catenary\ElectricLoco.cs" Link="Linked\ElectricLoco.cs" />
+    <Compile Include="..\DVRAT\Audio\MusicLibrary.cs" Link="Linked\MusicLibrary.cs" />
+    <Compile Include="..\DVRAT\Audio\FloatRingBuffer.cs" Link="Linked\FloatRingBuffer.cs" />
+    <Compile Include="..\DVRAT\Audio\MusicFolderTree.cs" Link="Linked\MusicFolderTree.cs" />
+    <Compile Include="..\DVRAT\Audio\PlayQueue.cs" Link="Linked\PlayQueue.cs" />
+    <Compile Include="..\DVRAT\Audio\ToneChain.cs" Link="Linked\ToneChain.cs" />
+    <Compile Include="..\DVRAT\Audio\MuffleChain.cs" Link="Linked\MuffleChain.cs" />
+    <Compile Include="..\DVRAT\Audio\JitterBuffer.cs" Link="Linked\JitterBuffer.cs" />
+    <Compile Include="..\DVRAT\Audio\SpeakerSettings.cs" Link="Linked\SpeakerSettings.cs" />
+    <Compile Include="..\DVRAT\Audio\DevicePicker.cs" Link="Linked\DevicePicker.cs" />
+    <Compile Include="..\DVRAT\Audio\Falloff.cs" Link="Linked\Falloff.cs" />
+    <Compile Include="..\DVRAT\Audio\FfmpegLog.cs" Link="Linked\FfmpegLog.cs" />
+    <Compile Include="..\DVRAT\Audio\RadioParsing.cs" Link="Linked\RadioParsing.cs" />
+    <Compile Include="..\DVRAT\Audio\RadioBuffering.cs" Link="Linked\RadioBuffering.cs" />
+    <Compile Include="..\RATCapture\CaptureProtocol.cs" Link="Linked\CaptureProtocol.cs" />
+    <Compile Include="..\DVRAT\Audio\CaptureBoost.cs" Link="Linked\CaptureBoost.cs" />
+    <Compile Include="..\DVRAT\Audio\SoftKnee.cs" Link="Linked\SoftKnee.cs" />
+    <Compile Include="..\DVRAT\Audio\Spectrum.cs" Link="Linked\Spectrum.cs" />
+    <Compile Include="..\DVRAT\Audio\FrameReader.cs" Link="Linked\FrameReader.cs" />
+    <Compile Include="..\DVRAT\Audio\StationList.cs" Link="Linked\StationList.cs" />
+    <Compile Include="..\DVRAT\Audio\RadioDirectoryData.cs" Link="Linked\RadioDirectoryData.cs" />
+    <Compile Include="..\DVRAT\Data\Models\*.cs" Link="Linked\Models\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- The shipped page files, so a test can check them for typos. -->
+  <ItemGroup>
+    <None Include="..\DVRAT\ModFiles\pages\*.json" Link="pages\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+</Project>

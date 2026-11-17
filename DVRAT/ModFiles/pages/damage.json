@@ -1,0 +1,27 @@
+{
+  "id": "damage",
+  "title": "Damage",
+  "parent": "loco",
+  "order": 30,
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Loading train data...", "when": "!train.loaded" },
+    { "type": "text", "style": "dim", "text": "This locomotive keeps no damage.", "when": "train.loaded && !damage.present" },
+
+    { "type": "list", "source": "damage.parts", "rows": 4, "when": "damage.present", "empty": "No damageable parts.",
+      "columns": [
+        { "header": "Part", "text": "{item.name}", "flex": 1 },
+        { "header": "Health", "text": "{item.health}", "width": 110, "align": "right", "warnWhen": "item.healthPct < 50" }
+      ] },
+    { "type": "field", "labelWidth": 220, "label": "Traction motors", "value": "{damage.motors}",
+      "when": "damage.hasMotors && !damage.motorsLost" },
+    { "type": "field", "labelWidth": 220, "label": "Traction motors", "value": "{damage.motors}", "style": "warning",
+      "when": "damage.motorsLost" },
+
+    { "type": "divider", "when": "damage.present" },
+    { "type": "list", "source": "damage.fuses", "when": "damage.present", "empty": "This locomotive has no fuses.",
+      "columns": [
+        { "header": "Fuse", "text": "{item.id}", "flex": 1 },
+        { "header": "State", "text": "{item.state}", "width": 80, "align": "right", "warnWhen": "!item.on" }
+      ] }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "planner",
+  "title": "Planner",
+  "parent": "route",
+  "order": 50,
+  "vars": { "tab": "route" },
+  "rows": [
+    { "type": "widget", "name": "planner", "when": "page.tab=route" },
+    { "type": "widget", "name": "plannerStops", "when": "page.tab=stops" }
+  ],
+  "softKeys": [
+    { "label": "Stops", "set": { "tab": "stops" }, "when": "page.tab=route" },
+    { "label": "Route", "set": { "tab": "route" }, "when": "page.tab=stops" }
+  ]
+}

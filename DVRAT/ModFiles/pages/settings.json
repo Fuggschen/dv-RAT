@@ -1,0 +1,61 @@
+{
+  "id": "settings",
+  "title": "Settings",
+  "order": 70,
+  "rows": [
+    { "type": "heading", "text": "Display" },
+    { "type": "buttons", "label": "Rotation",
+      "buttons": [
+        { "label": "Standard", "set": { "settings.rotation": "standard" }, "selectedWhen": "settings.rotation!=inverted" },
+        { "label": "Inverted", "set": { "settings.rotation": "inverted" }, "selectedWhen": "settings.rotation=inverted" }
+      ] },
+    { "type": "buttons", "label": "Brightness",
+      "buttons": [
+        { "label": "-", "set": { "settings.brightness": "{settings.brightness - 10}" }, "enabledWhen": "settings.brightness>10" },
+        { "label": "{settings.brightness} %" },
+        { "label": "+", "set": { "settings.brightness": "{settings.brightness + 10}" }, "enabledWhen": "settings.brightness<100" }
+      ] },
+    { "type": "buttons", "label": "Colors",
+      "buttons": [
+        { "label": "Light", "set": { "settings.theme": "light" }, "selectedWhen": "settings.theme=light" },
+        { "label": "Dark", "set": { "settings.theme": "dark" }, "selectedWhen": "settings.theme=dark" },
+        { "label": "Hotdog", "set": { "settings.theme": "hotdog" }, "selectedWhen": "settings.theme=hotdog" },
+        { "label": "Colorful", "set": { "settings.theme": "colorful" }, "selectedWhen": "settings.theme=colorful" },
+        { "label": "Pastel", "set": { "settings.theme": "pastel" }, "selectedWhen": "settings.theme=pastel" }
+      ] },
+    { "type": "buttons", "label": "Buttons",
+      "buttons": [
+        { "label": "Simple", "set": { "settings.buttons": "simple" }, "selectedWhen": "settings.buttons=simple" },
+        { "label": "Win 2000", "set": { "settings.buttons": "win2000" }, "selectedWhen": "settings.buttons=win2000" },
+        { "label": "Round", "set": { "settings.buttons": "round" }, "selectedWhen": "settings.buttons=round" },
+        { "label": "Outline", "set": { "settings.buttons": "outline" }, "selectedWhen": "settings.buttons=outline" },
+        { "label": "Pill", "set": { "settings.buttons": "pill" }, "selectedWhen": "settings.buttons=pill" }
+      ] },
+    { "type": "heading", "text": "Route" },
+    { "type": "buttons",
+      "buttons": [
+        { "label": "[x] Show signal aspects in the timetable", "set": { "settings.showSignalAspects": "false" }, "when": "settings.showSignalAspects!=false" },
+        { "label": "[ ] Show signal aspects in the timetable", "set": { "settings.showSignalAspects": "true" }, "when": "settings.showSignalAspects=false" }
+      ] },
+    { "type": "buttons",
+      "buttons": [
+        { "label": "[x] Show where the train end passes a higher limit (\u00A5)", "set": { "settings.showTrainClear": "false" }, "when": "settings.showTrainClear!=false" },
+        { "label": "[ ] Show where the train end passes a higher limit (\u00A5)", "set": { "settings.showTrainClear": "true" }, "when": "settings.showTrainClear=false" }
+      ] },
+    { "type": "buttons",
+      "buttons": [
+        { "label": "[x] Mark switches set against the planned route red", "set": { "settings.markMisalignedSwitches": "false" }, "when": "settings.markMisalignedSwitches!=false" },
+        { "label": "[ ] Mark switches set against the planned route red", "set": { "settings.markMisalignedSwitches": "true" }, "when": "settings.markMisalignedSwitches=false" }
+      ] },
+    { "type": "buttons",
+      "buttons": [
+        { "label": "[x] Show damaged switches (Junction Maintenance mod)", "set": { "settings.showSwitchDamage": "false" }, "when": "settings.showSwitchDamage!=false" },
+        { "label": "[ ] Show damaged switches (Junction Maintenance mod)", "set": { "settings.showSwitchDamage": "true" }, "when": "settings.showSwitchDamage=false" }
+      ] },
+    { "type": "buttons",
+      "buttons": [
+        { "label": "[x] Lower the limit on damaged track (Track Maintenance mod)", "set": { "settings.showTrackDamage": "false" }, "when": "settings.showTrackDamage!=false" },
+        { "label": "[ ] Lower the limit on damaged track (Track Maintenance mod)", "set": { "settings.showTrackDamage": "true" }, "when": "settings.showTrackDamage=false" }
+      ] }
+  ]
+}

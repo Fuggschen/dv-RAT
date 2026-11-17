@@ -1,0 +1,73 @@
+{
+  "id": "train",
+  "title": "Train",
+  "order": 10,
+  "openLabel": "Train Overview",
+  "vars": { "view": "cars", "list": "groups" },
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Loading train data...", "when": "!train.loaded" },
+    { "type": "text", "style": "dim", "text": "You are not on a train.", "when": "train.loaded && !train.onTrain" },
+
+    { "type": "pairs", "labelWidth": 90, "when": "train.onTrain",
+      "items": [ ["Speed", "{train.speedKmh:F0} km/h"], ["Mass", "{train.massT:F0} t"], ["Length", "{train.lengthM:F0} m"] ] },
+    { "type": "pairs", "labelWidth": 90, "when": "train.onTrain",
+      "items": [ ["Brake dist.", "{train.brakeDistance}"], ["Grade", "{train.gradePercent:+0.0;-0.0;0.0} %"], ["Altitude", "{train.altitudeM:F0} m"] ] },
+
+    { "type": "divider", "when": "train.onTrain" },
+    { "type": "buttons", "label": "Show", "when": "train.onTrain",
+      "buttons": [
+        { "label": "Cars", "set": { "view": "cars" }, "selectedWhen": "page.view=cars" },
+        { "label": "Brakes", "set": { "view": "brakes" }, "selectedWhen": "page.view=brakes" },
+        { "label": "Stress", "set": { "view": "stress" }, "selectedWhen": "page.view=stress" },
+        { "label": "[x] Group by job", "set": { "list": "cars" }, "when": "page.list=groups" },
+        { "label": "[ ] Group by job", "set": { "list": "groups" }, "when": "page.list!=groups" }
+      ] },
+
+    { "type": "list", "source": "train.{page.list}", "empty": "No cars.", "when": "train.onTrain && page.view=cars",
+      "columns": [
+        { "header": "#", "text": "{item.pos}", "width": 50 },
+        { "header": "Car", "text": "{item.name}", "flex": 1 },
+        { "header": "Cargo", "text": "{item.cargo}", "width": 110 },
+        { "header": "Job", "text": "{item.job}", "width": 90 },
+        { "header": "Next", "text": "{item.destination}", "width": 75 },
+        { "header": "", "text": "{item.state}", "width": 85, "style": "warning" }
+      ] },
+
+    { "type": "list", "source": "train.{page.list}", "empty": "No cars.", "when": "train.onTrain && page.view=brakes && train.realisticBrakes",
+      "columns": [
+        { "header": "#", "text": "{item.pos}", "width": 50 },
+        { "header": "Car", "text": "{item.name}", "flex": 1 },
+        { "header": "Valve", "text": "{item.valve}", "width": 105, "warnWhen": "item.valve=cut out" },
+        { "header": "Pipe", "text": "{item.pipeBar:F1}", "width": 50, "align": "right" },
+        { "header": "Ctrl", "text": "{item.controlBar:F1}", "width": 50, "align": "right" },
+        { "header": "Res.", "text": "{item.reservoirBar:F1}", "width": 50, "align": "right" },
+        { "header": "Cyl.", "text": "{item.cylinderBar:F1}", "width": 50, "align": "right" },
+        { "header": "Brake", "text": "{item.brakePct:F0} %", "width": 60, "align": "right" },
+        { "header": "Temp", "text": "{item.brakeTempC:F0} °C", "width": 70, "align": "right", "warnWhen": "item.brakeTempC >= 600" },
+        { "header": "Hand", "text": "{item.handbrake}", "width": 55, "align": "right", "style": "warning" }
+      ] },
+
+    { "type": "list", "source": "train.{page.list}", "empty": "No cars.", "when": "train.onTrain && page.view=brakes && !train.realisticBrakes",
+      "columns": [
+        { "header": "#", "text": "{item.pos}", "width": 50 },
+        { "header": "Car", "text": "{item.name}", "flex": 1 },
+        { "header": "Pipe", "text": "{item.pipeBar:F1}", "width": 60, "align": "right" },
+        { "header": "Ctrl", "text": "{item.controlBar:F1}", "width": 60, "align": "right" },
+        { "header": "Res.", "text": "{item.reservoirBar:F1}", "width": 60, "align": "right" },
+        { "header": "Cyl.", "text": "{item.cylinderBar:F1}", "width": 60, "align": "right" },
+        { "header": "Brake", "text": "{item.brakePct:F0} %", "width": 70, "align": "right" },
+        { "header": "Temp", "text": "{item.brakeTempC:F0} °C", "width": 75, "align": "right", "warnWhen": "item.brakeTempC >= 600" },
+        { "header": "Hand", "text": "{item.handbrake}", "width": 65, "align": "right", "style": "warning" }
+      ] },
+
+    { "type": "list", "source": "train.{page.list}", "empty": "No cars.", "when": "train.onTrain && page.view=stress",
+      "columns": [
+        { "header": "#", "text": "{item.pos}", "width": 50 },
+        { "header": "Car", "text": "{item.name}", "flex": 1 },
+        { "header": "Mass", "text": "{item.massT:F0} t", "width": 70, "align": "right" },
+        { "header": "Derail", "text": "{item.derailPct:F0} %", "width": 75, "align": "right", "warnWhen": "item.derailPct >= 70" },
+        { "header": "Coupler", "text": "{item.couplerKn:F0} kN", "width": 95, "align": "right", "when": "item.hasCoupler" },
+        { "header": "", "text": "{item.state}", "width": 85, "style": "warning" }
+      ] }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "integrations",
+  "title": "Integrations",
+  "parent": "world",
+  "order": 80,
+  "rows": [
+    { "type": "text", "style": "dim", "text": "Other mods whose data the tablet shows while they are loaded." },
+    { "type": "list", "source": "integrations.list", "empty": "Loading...",
+      "columns": [
+        { "header": "Mod", "text": "{item.name}", "flex": 1 },
+        { "header": "State", "text": "{item.state}", "width": 120, "align": "right", "warnWhen": "item.failed" }
+      ] },
+    { "type": "text", "style": "dim", "text": "Failed: the mod is loaded, but its data could not be read. Player.log says why.",
+      "when": "integrations.anyFailed" }
+  ]
+}

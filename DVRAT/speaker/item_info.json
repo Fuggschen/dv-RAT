@@ -1,0 +1,11 @@
+{
+	"Name": "R.A.T. Train Speaker",
+	"Description": "A sturdy loudspeaker to mount anywhere on a train. Connects to an R.A.T. tablet on the same train by itself; up to five play together. Its LED lights while a tablet is connected.",
+	"Amount": 25,
+	"Price": 3000,
+	"AssetBundleName": "../tablet/dvrat_assets",
+	"PrefabPath": "Assets/Prefabs/Speaker_Item.prefab",
+	"IconStandardPath": "Assets/Icons/Speaker_Icon.png",
+	"IconDroppedPath": "Assets/Icons/Speaker_Dropped.png",
+	"ShelfPrefabPath": "Assets/Prefabs/Speaker_ShelfItem.prefab"
+}

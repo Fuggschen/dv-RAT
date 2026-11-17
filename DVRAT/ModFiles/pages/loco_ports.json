@@ -1,0 +1,16 @@
+{
+  "id": "loco_ports",
+  "title": "Sim ports",
+  "parent": "world",
+  "order": 90,
+  "parentKey": false,
+  "rows": [
+    { "type": "text", "style": "dim", "text": "No locomotive in this train.", "when": "!loco.present" },
+    { "type": "list", "source": "loco.ports", "when": "loco.present", "empty": "This loco has no simulation.",
+      "columns": [
+        { "text": "{item.id}", "flex": 1 },
+        { "text": "{item.type}", "width": 150, "style": "dim" },
+        { "text": "{item.value:0.###}", "width": 120, "align": "right" }
+      ] }
+  ]
+}

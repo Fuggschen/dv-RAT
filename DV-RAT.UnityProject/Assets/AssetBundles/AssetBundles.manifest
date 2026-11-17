@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 4209072026
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: dvrat_assets
+      Dependencies: {}

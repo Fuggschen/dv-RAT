@@ -1,0 +1,19 @@
+{
+  "id": "world",
+  "title": "My Computer",
+  "order": 55,
+  "openLabel": "Status",
+  "rows": [
+    { "type": "field", "label": "Game time", "labelWidth": 180, "value": "{world.time}  ({world.date})", "when": "world.hasTime" },
+    { "type": "field", "label": "Real time", "labelWidth": 180, "value": "{world.realTime}" },
+    { "type": "field", "label": "Weather", "labelWidth": 180, "value": "rain {world.rainPct:F0} %", "when": "world.raining" },
+    { "type": "field", "label": "Weather", "labelWidth": 180, "value": "dry", "when": "world.hasTime && !world.raining" },
+    { "type": "field", "label": "Rails wet", "labelWidth": 180, "value": "{world.wetnessPct:F0} %", "when": "world.wetnessPct" },
+    { "type": "divider" },
+    { "type": "field", "label": "Money", "labelWidth": 180, "value": "${world.money:N0}", "when": "world.loaded" },
+    { "type": "field", "label": "Fees", "labelWidth": 180, "value": "${world.feesTotal:N0} in {world.fees.count} fees", "style": "warning", "when": "world.fees" },
+    { "type": "field", "label": "Fees", "labelWidth": 180, "value": "none", "when": "world.loaded && !world.fees" },
+    { "type": "field", "label": "Licenses", "labelWidth": 180, "value": "{world.licenses.count}", "when": "world.loaded" },
+    { "type": "field", "label": "Owned vehicles", "labelWidth": 180, "value": "{world.owned.count}", "when": "world.loaded" }
+  ]
+}

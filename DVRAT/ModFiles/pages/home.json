@@ -1,0 +1,52 @@
+{
+  "id": "home",
+  "title": "R.A.T. Main Menu",
+  "rows": [
+    { "type": "field", "label": "Train", "labelWidth": 130, "value": "loading...", "when": "!train.loaded" },
+    { "type": "field", "label": "Train", "labelWidth": 130, "value": "not on a train", "when": "train.loaded && !train.onTrain" },
+    { "type": "field", "label": "Train", "labelWidth": 130, "when": "train.onTrain",
+      "value": "{train.speedKmh:F0} km/h  |  {train.wagonCount} wagons  |  {train.massT:F0} t  |  {train.lengthM:F0} m" },
+    { "type": "field", "label": "Locomotive", "labelWidth": 130, "value": "{loco.name}", "when": "train.onTrain && loco.present" },
+    { "type": "field", "label": "Supplies", "labelWidth": 130, "value": "fuel {loco.fuel.pct:F0} %",
+      "when": "train.onTrain && loco.fuel.has" },
+    { "type": "field", "label": "Supplies", "labelWidth": 130, "value": "coal {loco.coal.pct:F0} %  |  water {loco.water.pct:F0} %",
+      "when": "train.onTrain && loco.coal.has && !loco.fuel.has" },
+    { "type": "field", "label": "Supplies", "labelWidth": 130, "value": "battery {loco.charge.pct:F0} %",
+      "when": "train.onTrain && loco.charge.has && !loco.fuel.has && !loco.coal.has" },
+    { "type": "field", "label": "Electric", "labelWidth": 130, "value": "{electric.voltage}",
+      "when": "train.onTrain && electric.present && !electric.offWire" },
+    { "type": "field", "label": "Electric", "labelWidth": 130, "value": "off the wire", "style": "warning",
+      "when": "train.onTrain && electric.offWire" },
+    { "type": "field", "label": "Damage", "labelWidth": 130, "value": "{damage.motors} motors working",
+      "when": "train.onTrain && damage.hasMotors && !damage.motorsLost" },
+    { "type": "field", "label": "Damage", "labelWidth": 130, "value": "{damage.motors} motors working", "style": "warning",
+      "when": "train.onTrain && damage.motorsLost" },
+    { "type": "field", "label": "Power", "labelWidth": 130, "value": "{solar.cars.count} cars with power", "when": "train.onTrain && solar.present" },
+
+    { "type": "field", "label": "Route", "labelWidth": 130, "value": "No route loaded", "when": "!route.hasPlan" },
+    { "type": "field", "label": "Route", "labelWidth": 130, "when": "route.hasPlan && !route.hasNextStation",
+      "value": "to {route.destination}" },
+    { "type": "field", "label": "Route", "labelWidth": 130, "when": "route.hasPlan && route.hasNextStation",
+      "value": "to {route.destination}  |  next {route.nextStation} in {route.nextStationDistance}" },
+
+    { "type": "field", "label": "Jobs", "labelWidth": 130, "value": "loading...", "when": "!jobs.loaded" },
+    { "type": "field", "label": "Jobs", "labelWidth": 130, "when": "jobs.loaded",
+      "value": "{jobs.acceptedCount} accepted, {jobs.coupledCount} coupled, {jobs.activeCount} active  |  {jobs.cargoT:F0} t cargo" },
+
+    { "type": "field", "label": "Station", "labelWidth": 130, "value": "No station loaded", "when": "!station.known" },
+    { "type": "field", "label": "Station", "labelWidth": 130, "value": "{station.name}  {station.distance}",
+      "when": "station.known && !station.jobsKnown" },
+    { "type": "field", "label": "Station", "labelWidth": 130, "value": "{station.name}  |  {station.jobs.count} jobs",
+      "when": "station.jobsKnown" },
+    { "type": "field", "label": "Maintenance", "labelWidth": 130, "value": "{station.damagedSwitches} of {station.switches.count} switches damaged",
+      "when": "station.switchesKnown" },
+
+    { "type": "divider" },
+    { "type": "field", "label": "Money", "labelWidth": 130, "value": "${world.money:N0}", "when": "world.loaded" },
+    { "type": "field", "label": "Fees", "labelWidth": 130, "value": "${world.feesTotal:N0}", "style": "warning", "when": "world.fees" },
+    { "type": "field", "label": "Fees", "labelWidth": 130, "value": "none", "when": "world.loaded && !world.fees" },
+    { "type": "field", "label": "Weather", "labelWidth": 130, "value": "{weather.now}", "when": "weather.now" },
+    { "type": "field", "label": "Weather", "labelWidth": 130, "value": "rain {world.rainPct:F0} %", "when": "!weather.now && world.raining" },
+    { "type": "field", "label": "Weather", "labelWidth": 130, "value": "dry", "when": "!weather.now && world.hasTime && !world.raining" }
+  ]
+}

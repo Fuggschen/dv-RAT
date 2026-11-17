@@ -1,0 +1,139 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>DVRAT</AssemblyName>
+    <RootNamespace>DVRAT</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Don't copy local references to output - only our DLL -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <!-- All referenced DLLs are runtime-only (already in game install), don't copy to output -->
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>false</Private>
+    </Reference>
+  </ItemDefinitionGroup>
+
+  <PropertyGroup>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The line format shared with ratcapture.exe, the PC Audio helper. -->
+    <Compile Include="..\RATCapture\CaptureProtocol.cs" Link="Audio\CaptureProtocol.cs" />
+    <!-- Builds ratcapture.exe first, so the build folder gets it; the mod does not reference it. -->
+    <ProjectReference Include="..\RATCapture\RATCapture.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Unity Engine -->
+    <Reference Include="UnityEngine">
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+    </Reference>
+
+    <!-- Unity Mod Manager -->
+    <Reference Include="UnityModManager">
+    </Reference>
+
+    <!-- Derail Valley Game Assemblies -->
+    <Reference Include="Assembly-CSharp">
+    </Reference>
+    <Reference Include="DV.Simulation">
+    </Reference>
+    <Reference Include="DV.RailTrack">
+    </Reference>
+    <Reference Include="DV.BrakeSystem">
+    </Reference>
+    <Reference Include="DV.ThingTypes">
+    </Reference>
+    <Reference Include="DV.Common">
+    </Reference>
+    <Reference Include="DV.Preferences">
+    </Reference>
+    <Reference Include="DV.Interaction">
+    </Reference>
+    <Reference Include="DV.CabControls.Spec">
+    </Reference>
+    <Reference Include="VRTK">
+    </Reference>
+    <Reference Include="DV.Inventory">
+    </Reference>
+    <Reference Include="DV.UI">
+    </Reference>
+    <Reference Include="DV.UIFramework">
+    </Reference>
+    <Reference Include="DV.LayeredAudio">
+    </Reference>
+    <Reference Include="DV.Localization">
+    </Reference>
+    <Reference Include="DV.Utils">
+    </Reference>
+    <Reference Include="DV.WeatherSystem">
+    </Reference>
+    <Reference Include="DV.PointSet">
+    </Reference>
+    <Reference Include="DV.OriginShiftInfo">
+    </Reference>
+    <!-- The game's speed and grade sign rules, reused by TrackSigns -->
+    <Reference Include="DV.SignPlacer">
+    </Reference>
+    <Reference Include="DV.SignPlacer.Utils">
+    </Reference>
+
+    <!-- The game's boombox player; its FilePlayer decodes mp3, ogg and wav for the Media Player -->
+    <Reference Include="DV.RadioPlayer">
+    </Reference>
+
+    <!-- Custom Item Mod -->
+    <Reference Include="custom_item_mod">
+    </Reference>
+    <Reference Include="custom_item_components">
+    </Reference>
+
+    <!-- Harmony (for runtime patching) -->
+    <Reference Include="0Harmony">
+    </Reference>
+
+    <!-- BezierCurves (used by RailTrack.curve) -->
+    <Reference Include="BezierCurves">
+    </Reference>
+
+    <!-- Vector3d (used by BezierPoint.position) -->
+    <Reference Include="net.smkd.vector3d">
+    </Reference>
+
+    <!-- Newtonsoft JSON (bundled with DV) -->
+    <Reference Include="Newtonsoft.Json">
+    </Reference>
+
+    <!-- Unity TextRendering (for Font class) -->
+    <Reference Include="UnityEngine.TextRenderingModule">
+    </Reference>
+
+    <!-- Unity Video (for VideoPlayer) -->
+    <Reference Include="UnityEngine.VideoModule">
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+{
+  "id": "stopwatch",
+  "title": "Stopwatch",
+  "parent": "world",
+  "order": 50,
+  "rows": [
+    { "type": "widget", "name": "stopwatch" },
+    { "type": "divider", "when": "jobs.active" },
+    { "type": "heading", "text": "Time left on active jobs", "when": "jobs.active" },
+    { "type": "list", "source": "jobs.active", "rows": 5, "filter": "item.timed", "sort": "item.timeLeftS", "when": "jobs.active",
+      "empty": "No active job has a time limit.",
+      "columns": [
+        { "text": "{item.id}", "width": 120 },
+        { "text": "{item.from} > {item.to}", "flex": 1 },
+        { "text": "{item.timeLeft}", "width": 140, "align": "right" }
+      ] }
+  ]
+}

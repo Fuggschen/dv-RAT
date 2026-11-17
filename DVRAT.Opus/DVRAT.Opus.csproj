@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The Opus codec for tablet sound in multiplayer, with Concentus (a C# port of Opus). A DLL of its own, which
+    DVRAT.Multiplayer.dll loads through reflection only when it and Concentus.dll are in the mod folder: a type built
+    on a missing library breaks every GetTypes over the loaded assemblies, the game's console's among them.
+    Ships with Concentus.dll and the three libraries it needs that the game lacks; all are copied into build/.
+  -->
+  <Import Project="..\DVRAT\GamePaths.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>DVRAT.Opus</AssemblyName>
+    <RootNamespace>DVRAT.Opus</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <BuildOutputDir>$(MSBuildThisFileDirectory)..\build\</BuildOutputDir>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>false</Private>
+    </Reference>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DVRAT\DVRAT.csproj" Private="false" />
+    <!-- Concentus 2.x for .NET 4.5.2 and what it needs; the game has System.Runtime.CompilerServices.Unsafe itself. -->
+    <PackageReference Include="Concentus" Version="2.2.2" GeneratePathProperty="true" />
+    <PackageReference Include="System.Memory" Version="4.5.4" GeneratePathProperty="true" />
+    <PackageReference Include="System.Buffers" Version="4.5.1" GeneratePathProperty="true" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" GeneratePathProperty="true" />
+    <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.AudioModule" />
+  </ItemGroup>
+
+  <Target Name="CopyToBuildFolder" AfterTargets="Build">
+    <ItemGroup>
+      <CodecFiles Include="$(PkgConcentus)\lib\net452\Concentus.dll" />
+      <CodecFiles Include="$(PkgSystem_Memory)\lib\net461\System.Memory.dll" />
+      <CodecFiles Include="$(PkgSystem_Buffers)\lib\net461\System.Buffers.dll" />
+      <CodecFiles Include="$(PkgSystem_Numerics_Vectors)\lib\net46\System.Numerics.Vectors.dll" />
+    </ItemGroup>
+    <Error Condition="!Exists('%(CodecFiles.FullPath)')" Text="Missing %(CodecFiles.FullPath); restore DVRAT.Opus." />
+    <Copy SourceFiles="$(TargetPath);@(CodecFiles)" DestinationFolder="$(BuildOutputDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
