@@ -4,7 +4,7 @@ loopback (Windows 10 version 2004 or later), and reads its song and play keys fr
 
 While the tablet plays a program, the program is turned down to -80 dB on the PC, so you do not hear it twice;
 its slider in the Windows volume mixer does not move. The tablet gives the program its volume back when you
-stop or pause it there, switch the tablet off or quit the game.
+stop it there or play other media, switch the tablet off or quit the game. A paused program stays silent.
 
 IF A PROGRAM STAYS SILENT ON THE PC, e.g. after the game crashed: double-click ratcapture.exe. It puts every
 program's volume back to normal and says what it changed. The old levels are kept in restore.txt next to it

@@ -164,8 +164,8 @@ Game time, real time, weather, wet rails, money, fees, licenses and owned vehicl
 - **PC Audio** (Windows; Linux under Proton or Wine, see below): plays a program running on your PC, such
   as Spotify or a browser, through the tablet. Pick the program from the ones playing sound. Where
   Windows' media controls know the program, the tablet shows the song and has meida keys available. 
-  The program is silent on the PC while the tablet plays it and gets its volume back when
-  you stop, switch the tablet off or quit the game.
+  The program is silent on the PC while the tablet plays or pauses it and gets its volume back
+  when you stop, play other media, switch the tablet off or quit the game.
 
 Media Player, Internet Radio and PC Audio share one volume and one set of speakers.
 

@@ -39,6 +39,8 @@ namespace DVRAT
         private RadioStation _station;
         private CaptureApp _captureApp;
         private CaptureTrack _capture;
+        // The program's media status Update last acted on. Only a change from it means the program paused or resumed by itself.
+        private string _captureStatusSeen;
         private PlayQueue _queue;
         private readonly System.Random _random = new System.Random();
         // Handled in Update so the next song never starts inside the old player's coroutine.
@@ -106,7 +108,6 @@ namespace DVRAT
         public string CaptureStatus => _remote != null ? _remote.CaptureStatus : _capture?.MediaStatus;
 
         private bool CaptureKeys => _captureApp != null && _capture != null && _capture.HasMedia;
-        private bool CaptureRunning => CaptureKeys && _capture.MediaStatus == "Playing";
 
         /// <summary>Null before anything played.</summary>
         public IReadOnlyList<string> QueueFiles => _queue?.Files;
@@ -114,11 +115,11 @@ namespace DVRAT
         // A key that would do nothing is shown dimmed.
         public bool CanStop => _remote != null ? _remote.CanStop : _state != PlayState.Stopped;
         public bool CanPlay => _remote != null ? _remote.CanPlay : _captureApp != null
-            ? _state == PlayState.Stopped || CaptureKeys && !CaptureRunning
+            ? _state == PlayState.Stopped || _state == PlayState.Paused && CaptureKeys
             : _state == PlayState.Paused || _state == PlayState.Stopped && (_queue != null || _station != null);
-        // Live radio only stops. A program pauses only through its own media controls.
+        // Live radio only stops. A program pauses only through its own media controls. Its state follows the program, see FollowCaptureStatus.
         public bool CanPause => _remote != null ? _remote.CanPause : _captureApp != null
-            ? _state == PlayState.Playing && CaptureRunning
+            ? _state == PlayState.Playing && CaptureKeys
             : _state == PlayState.Playing && _station == null;
         public bool CanNext => _remote != null ? _remote.CanNext : _captureApp != null
             ? _state != PlayState.Stopped && CaptureKeys
@@ -280,9 +281,8 @@ namespace DVRAT
                     PlayCapture(_captureApp);
                     return;
                 }
-                // Silent on the PC again, then the program's own play key.
-                _capture?.Send(CaptureProtocol.QuietOn);
                 _capture?.Send(CaptureProtocol.Play);
+                _captureStatusSeen = _capture?.MediaStatus;
                 _state = PlayState.Playing;
             }
             else if (_state == PlayState.Paused)
@@ -306,9 +306,10 @@ namespace DVRAT
             if (!CanPause) return;
             if (_captureApp != null)
             {
-                // The program gets its PC volume back.
+                // The program stays silent on the PC; only stopping gives its volume back.
                 _capture.Send(CaptureProtocol.Pause);
-                _capture.Send(CaptureProtocol.QuietOff);
+                // Still "Playing" until the program answers, which must not count as a resume.
+                _captureStatusSeen = _capture.MediaStatus;
             }
             else
             {
@@ -421,6 +422,7 @@ namespace DVRAT
                 return;
             }
             _capture = new CaptureTrack { Tap = TapsForNewTrack() };
+            _captureStatusSeen = null;
             try
             {
                 _capture.Start(app.ProcessName, app.DisplayName, Sources());
@@ -432,6 +434,21 @@ namespace DVRAT
             {
                 OnErrorInfo($"ratcapture did not start: {ex.Message}");
             }
+        }
+
+        /// <summary>Paused or resumed in the program or by a media key: the tablet follows. The program stays silent on the PC either way.</summary>
+        private void FollowCaptureStatus()
+        {
+            string status = _capture.MediaStatus;
+            if (status == _captureStatusSeen) return;
+            string before = _captureStatusSeen;
+            _captureStatusSeen = status;
+            // The first status after the start is not a change.
+            if (before == null || _pausedByGame) return;
+            if (status == "Playing" && _state == PlayState.Paused)
+                _state = PlayState.Playing;
+            else if (status == "Paused" && _state == PlayState.Playing)
+                _state = PlayState.Paused;
         }
 
         // The tablet's source comes first: it is the clock and keeps playing, muted, while speakers play.
@@ -835,12 +852,7 @@ namespace DVRAT
 
             if (_capture != null)
             {
-                // Resumed in the program or by a media key: play along and silence the PC again.
-                if (_state == PlayState.Paused && !_pausedByGame && _capture.MediaStatus == "Playing")
-                {
-                    _capture.Send(CaptureProtocol.QuietOn);
-                    _state = PlayState.Playing;
-                }
+                FollowCaptureStatus();
                 if (_capture.Error != null)
                     OnErrorInfo(_capture.Error);
                 else if (_capture.Ended)
