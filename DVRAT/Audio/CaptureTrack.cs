@@ -155,6 +155,8 @@ namespace DVRAT
         protected override void Shape(float[] samples, int count) =>
             CaptureBoost.Apply(samples, count, CaptureBoost.Gain(RATMain.Settings?.PcAudioBoostDb ?? CaptureBoost.DefaultDb));
 
+        protected override bool Live => true;
+
         protected override string Failure(int exitCode) => _problem ?? $"ratcapture ended with code {exitCode}";
 
         protected override string StreamEnded() => _problem ?? "the Linux helper ended";

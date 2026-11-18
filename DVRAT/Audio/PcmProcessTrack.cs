@@ -24,6 +24,8 @@ namespace DVRAT
         protected const int StopTimeoutMs = 500;
         // Time for every source to be set up before the common start.
         private const double StartDelaySeconds = 0.1;
+        // Live sound: queued before the sources start. More than Unity reads ahead of a new clip, which 0.75 s was not.
+        private const float LiveStartSeconds = 1.5f;
 
         private AudioFanOut _fanOut;
         private Process _process;
@@ -43,6 +45,15 @@ namespace DVRAT
         private volatile bool _draining;
         private volatile bool _finished;
         private volatile string _error;
+        // Live sound: a source ran short since the last start, and when the hold began.
+        private volatile bool _ranDry;
+        private float _holdSince;
+        // Counts StartTogether calls; a clip from an earlier one reads nothing. Held with the read that checks it.
+        private int _starts;
+        private readonly object _startLock = new object();
+        // Live sound: the first short read since the last start, logged by Update.
+        private long _startedMs;
+        private string _firstShortRead;
 
         private readonly List<Output> _outputs = new List<Output>();
         private static readonly System.Diagnostics.Stopwatch Clock = System.Diagnostics.Stopwatch.StartNew();
@@ -140,7 +151,42 @@ namespace DVRAT
             foreach (var source in sources)
                 Add(source);
             _mainThread = Thread.CurrentThread.ManagedThreadId;
+            if (Live) Hold();
             StartTogether();
+        }
+
+        /// <summary>
+        /// True for sound that comes in real time, which never fills Unity's read-ahead of a new clip by itself. Sources then
+        /// play silence until <see cref="LiveStartSeconds"/> is queued and restart together, at the start and after running dry.
+        /// </summary>
+        protected virtual bool Live => false;
+
+        /// <summary>Call every frame on the main thread.</summary>
+        public void Update()
+        {
+            if (!Live || _fanOut == null || _paused) return;
+            if (!_fanOut.Holding)
+            {
+                if (!_ranDry) return;
+                RATMain.Log($"{_name}: a speaker ran short ({_firstShortRead}); buffering again");
+                Hold();
+                return;
+            }
+            int target = (int)(_sampleRate * Channels * LiveStartSeconds);
+            if (_fanOut.Queued < target && !_finished) return;
+            StartTogether(() =>
+            {
+                _fanOut.Release(target);
+                _ranDry = false;
+                _firstShortRead = null;
+            });
+            RATMain.Log($"{_name}: speakers restarted together after {Time.unscaledTime - _holdSince:0.0} s of buffering");
+        }
+
+        private void Hold()
+        {
+            _fanOut.Hold();
+            _holdSince = Time.unscaledTime;
         }
 
         /// <summary>Why a <see cref="LaunchStream"/> stream ended by itself; null when that is no error.</summary>
@@ -192,8 +238,25 @@ namespace DVRAT
             return true;
         }
 
-        private void StartTogether()
+        /// <param name="beforeStart">Runs once the old clips can no longer read, before the new ones exist.</param>
+        private void StartTogether(Action beforeStart = null)
         {
+            foreach (var output in _outputs)
+            {
+                if (output.Source == null) continue;
+                output.Source.Stop();
+                if (output.Clip != null)
+                    UnityEngine.Object.Destroy(output.Clip);
+            }
+            // A stopped clip's read can still be under way on the streaming thread.
+            int start;
+            lock (_startLock)
+            {
+                start = ++_starts;
+                beforeStart?.Invoke();
+                _startedMs = Clock.ElapsedMilliseconds;
+            }
+
             _clipStartFrame = _fanOut.Played / Channels;
             int lengthSamples = (int)Math.Min(int.MaxValue, (long)_sampleRate * 3600 * ClipHours);
             double startAt = AudioSettings.dspTime + StartDelaySeconds;
@@ -203,11 +266,8 @@ namespace DVRAT
             foreach (var output in _outputs)
             {
                 if (output.Source == null) continue;
-                output.Source.Stop();
-                if (output.Clip != null)
-                    UnityEngine.Object.Destroy(output.Clip);
                 var queue = output.Queue;
-                output.Clip = AudioClip.Create(_name, lengthSamples, Channels, _sampleRate, true, data => Fill(queue, data));
+                output.Clip = AudioClip.Create(_name, lengthSamples, Channels, _sampleRate, true, data => Fill(queue, data, start));
                 output.Source.clip = output.Clip;
                 output.Source.PlayScheduled(startAt);
                 if (_paused)
@@ -318,8 +378,18 @@ namespace DVRAT
         }
 
         /// <summary>Unity's audio callback for one source.</summary>
-        private void Fill(FloatRingBuffer queue, float[] data)
+        private void Fill(FloatRingBuffer queue, float[] data, int start)
         {
+            if (Live)
+            {
+                FillLive(queue, data, start);
+                return;
+            }
+            if (start != Volatile.Read(ref _starts))
+            {
+                Array.Clear(data, 0, data.Length);
+                return;
+            }
             int read = _fanOut.Read(queue, data, 0, data.Length);
             // Unity reads a new clip far ahead on its streaming thread, and silence there plays later as a gap, so wait.
             if (read < data.Length && Thread.CurrentThread.ManagedThreadId != _mainThread)
@@ -329,6 +399,29 @@ namespace DVRAT
                 {
                     Thread.Sleep(2);
                     read += _fanOut.Read(queue, data, read, data.Length - read);
+                }
+            }
+            Array.Clear(data, read, data.Length - read);
+        }
+
+        // No waiting: one sleeping callback can hold up the other sources' refills. Update rebuffers instead.
+        private void FillLive(FloatRingBuffer queue, float[] data, int start)
+        {
+            int read = 0;
+            lock (_startLock)
+            {
+                if (start == _starts)
+                {
+                    bool holding = _fanOut.Holding;
+                    int queued = queue.Count;
+                    read = _fanOut.Read(queue, data, 0, data.Length);
+                    if (read < data.Length && !holding && !_ranDry)
+                    {
+                        string thread = Thread.CurrentThread.ManagedThreadId == _mainThread ? "main" : "streaming";
+                        _firstShortRead = $"{Clock.ElapsedMilliseconds - _startedMs} ms after the start, asked {data.Length}, " +
+                                          $"got {read} of {queued} queued, on the {thread} thread";
+                        _ranDry = true;
+                    }
                 }
             }
             Array.Clear(data, read, data.Length - read);

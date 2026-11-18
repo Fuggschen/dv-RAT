@@ -806,6 +806,7 @@ namespace DVRAT
             _ffmpeg?.RemoveDestroyedOutputs();
             _capture?.RemoveDestroyedOutputs();
             _network?.RemoveDestroyedOutputs();
+            _capture?.Update();
             _source.mute = _devices.Count > 0;
             foreach (var device in _devices)
                 device.MasterVolume = _source.volume;

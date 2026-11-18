@@ -95,6 +95,52 @@ public class AudioFanOutTests
     }
 
     [Fact]
+    public void HoldingFillsTheQueuesWhileNothingReads()
+    {
+        long now = 0;
+        var fan = new AudioFanOut(8, () => now);
+        fan.AddOutput();
+        fan.Hold();
+        now = AudioFanOut.StallMs * 10;
+
+        Assert.Equal(6, fan.Write(Count(6), 0, 6));
+        Assert.Equal(6, fan.Queued);
+    }
+
+    [Fact]
+    public void ReadsWhileHoldingTakeNothing()
+    {
+        var fan = new AudioFanOut(8, () => 0);
+        var output = fan.AddOutput();
+        fan.Write(Count(4), 0, 4);
+        fan.Hold();
+
+        Assert.Equal(0, fan.Read(output, new float[4], 0, 4));
+        Assert.Equal(4, output.Count);
+    }
+
+    [Fact]
+    public void ReleaseLeavesEveryOutputAtTheSameSound()
+    {
+        var fan = new AudioFanOut(16, () => 0);
+        var a = fan.AddOutput();
+        var b = fan.AddOutput();
+        fan.Write(Count(8), 0, 8);
+        fan.Read(a, new float[2], 0, 2);
+        fan.Hold();
+        fan.Write(Count(12).Skip(8).ToArray(), 0, 4);
+
+        fan.Release(5);
+
+        var readA = new float[5];
+        var readB = new float[5];
+        Assert.Equal(5, fan.Read(a, readA, 0, 5));
+        Assert.Equal(5, fan.Read(b, readB, 0, 5));
+        Assert.Equal(Count(12).Skip(7), readA);
+        Assert.Equal(readA, readB);
+    }
+
+    [Fact]
     public void AnOutputThatStoppedReadingDoesNotHoldBackTheOthers()
     {
         long now = 0;

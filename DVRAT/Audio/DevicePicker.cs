@@ -36,6 +36,7 @@ namespace DVRAT
     /// <summary>
     /// Feeds the same samples to several outputs, one queue each. Thread-safe: the decoder writes, audio callbacks read.
     /// An output idle for <see cref="StallMs"/> stops holding back the others and is realigned when it reads again.
+    /// While <see cref="Holding"/>, outputs get silence and the queues fill up, for a common restart.
     /// </summary>
     public class AudioFanOut
     {
@@ -48,6 +49,7 @@ namespace DVRAT
         private readonly object _lock = new object();
         private long _written;
         private int _lastLevel;
+        private bool _holding;
 
         public AudioFanOut(int capacity, Func<long> nowMs)
         {
@@ -64,6 +66,50 @@ namespace DVRAT
         public bool Drained
         {
             get { lock (_lock) return Level() == 0; }
+        }
+
+        public bool Holding
+        {
+            get { lock (_lock) return _holding; }
+        }
+
+        /// <summary>Samples in the fullest queue.</summary>
+        public int Queued
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    int most = 0;
+                    foreach (var output in _outputs)
+                        most = Math.Max(most, output.Count);
+                    return most;
+                }
+            }
+        }
+
+        /// <summary>Outputs read silence and writes fill every queue, read or not, until <see cref="Release"/>.</summary>
+        public void Hold()
+        {
+            lock (_lock) _holding = true;
+        }
+
+        /// <summary>Ends <see cref="Hold"/> with every queue at the same sound, holding at most <paramref name="level"/> samples.</summary>
+        public void Release(int level)
+        {
+            lock (_lock)
+            {
+                foreach (var output in _outputs)
+                    level = Math.Min(level, output.Count);
+                long now = _nowMs();
+                foreach (var output in _outputs)
+                {
+                    Align(output, level);
+                    _lastRead[output] = now;
+                }
+                _lastLevel = level;
+                _holding = false;
+            }
         }
 
         public FloatRingBuffer AddOutput()
@@ -95,7 +141,7 @@ namespace DVRAT
                 long now = _nowMs();
                 int room = int.MaxValue;
                 foreach (var output in _outputs)
-                    if (IsLive(output, now))
+                    if (_holding || IsLive(output, now))
                         room = Math.Min(room, output.Capacity - output.Count);
                 if (room == int.MaxValue) return 0;
 
@@ -122,7 +168,7 @@ namespace DVRAT
                 }
                 if (_lastRead.ContainsKey(output))
                     _lastRead[output] = now;
-                return output.Read(target, offset, count);
+                return _holding ? 0 : output.Read(target, offset, count);
             }
         }
 
