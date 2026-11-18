@@ -2,8 +2,8 @@
 	"Releases": [
 		{
 			"Id": "DVRAT",
-			"Version": "1.0.0",
-			"DownloadUrl": "https://github.com/Fuggschen/dv-RAT/releases/download/v1.0.0/DVRAT-1.0.0.zip"
+			"Version": "1.0.1",
+			"DownloadUrl": "https://github.com/Fuggschen/dv-RAT/releases/download/v1.0.1/DVRAT-1.0.1.zip"
 		}
 	]
 }
