@@ -237,8 +237,11 @@ namespace RatCapture
         /// <summary>Returns at once without media controls.</summary>
         private void PauseAndWait()
         {
-            if (MediaStatus() != "Playing") return;
+            string status = MediaStatus();
+            if (status == null) return;
+            // Windows can report "Paused" for a program that plays again, and pausing a paused program does nothing.
             _media.Press(CaptureProtocol.Pause);
+            _status.WriteLine(CaptureProtocol.LogLine($"Pausing {_process} before giving its volume back (it reported {status})"));
             var waited = Stopwatch.StartNew();
             while (waited.ElapsedMilliseconds < PauseTimeoutMs && MediaStatus() == "Playing")
                 Thread.Sleep(PausePollMs);

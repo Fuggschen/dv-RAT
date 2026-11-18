@@ -646,8 +646,10 @@ static void pause_and_wait(const char *program)
 {
     char status[32];
     media_status(program, status, sizeof status);
-    if (strcmp(status, "Playing") != 0) return;
+    if (status[0] == 0) return;
+    // A player can report "Paused" while it plays again, and pausing a paused player does nothing.
     send_key(program, "Pause");
+    log_line("Pausing %s before giving its volume back (it reported %s)", program, status);
     long until = now_ms() + PAUSE_TIMEOUT_MS;
     do
     {
