@@ -14,6 +14,12 @@ namespace DVRAT
         [SerializeField] private Color _ledColor = new Color(0.1f, 1f, 0.25f);
         [Tooltip("Brightness of the lit LED; raise it if the LED looks dark in daylight.")]
         [SerializeField] private float _ledIntensity = 8f;
+        [Tooltip("Color the LED blinks in after IDENT on the tablet's Devices page.")]
+        [SerializeField] private Color _identColor = new Color(0.1f, 0.3f, 1f);
+
+        private const float IdentSeconds = 10f;
+        // On, then off, for this long each.
+        private const float IdentBlinkSeconds = 0.25f;
 
         private static readonly List<RATSpeaker> Active = new List<RATSpeaker>();
 
@@ -21,6 +27,9 @@ namespace DVRAT
         private readonly List<(Material material, Color off)> _leds = new List<(Material, Color)>();
         private bool _connected;
         private ToneSettings _tone;
+        // Time.time when the IDENT blinking ends. Local to this player.
+        private float _identUntil;
+        private bool _identLit;
 
         // Full volume up to near, silent at range.
         private const float SpeakerNear = 2f;
@@ -126,6 +135,31 @@ namespace DVRAT
             float volume = MasterVolume * Settings.Volume / 100f;
             if (!Mathf.Approximately(Source.volume, volume))
                 Source.volume = volume;
+            if (_identUntil > 0f) UpdateIdent();
+        }
+
+        /// <summary>Blinks the LED blue for a few seconds, so the player finds this device on the train.</summary>
+        public void Identify()
+        {
+            _identUntil = Time.time + IdentSeconds;
+            _identLit = false;
+            UpdateIdent();
+        }
+
+        private void UpdateIdent()
+        {
+            float left = _identUntil - Time.time;
+            if (left <= 0f)
+            {
+                _identUntil = 0f;
+                ShowLed();
+                return;
+            }
+            bool lit = Mathf.FloorToInt((IdentSeconds - left) / IdentBlinkSeconds) % 2 == 0;
+            if (lit == _identLit) return;
+            _identLit = lit;
+            foreach (var (material, off) in _leds)
+                SetEmission(material, lit ? _identColor * _ledIntensity : off);
         }
 
         private void OnEnable() => Active.Add(this);
@@ -144,6 +178,8 @@ namespace DVRAT
 
         private void ShowLed()
         {
+            // The blinking shows the connection state when it ends.
+            if (_identUntil > 0f) return;
             foreach (var (material, off) in _leds)
                 SetEmission(material, _connected ? _ledColor * _ledIntensity : off);
         }

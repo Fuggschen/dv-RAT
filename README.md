@@ -155,7 +155,8 @@ Game time, real time, weather, wet rails, money, fees, licenses and owned vehicl
   Backwards, Play, Forwards, Pause and Shuffle, a volume bar, and a spectrum view. Music keeps playing on
   other pages until the tablet is switched off.
   - **Devices:** the speakers and subwoofer the tablet plays through, each with its own volume and an EQ
-    for Lows, Mids and Highs from -12 to +12 dB (the subwoofer has Lows only).
+    for Lows, Mids and Highs from -12 to +12 dB (the subwoofer has Lows only). IDENT blinks the device's LED
+    blue for 10 seconds, so you find it on the train. Only you see the blinking.
 - **Internet Radio:** the game's own stations, your own stations, and the genres and countries of the
   [radio-browser.info](https://www.radio-browser.info) directory. Stations from the directory can be saved
   to your own list. From two signal bars up the stream plays clean; at one bar it stops now and then to

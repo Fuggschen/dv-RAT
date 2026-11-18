@@ -95,6 +95,7 @@ namespace DVRAT
                 _state[EqKey] = device.Settings.Id;
                 context.Rebuild();
             }, Theme.FontSmall, Theme.Text, new Vector2(60, StepKeySize));
+            UIFactory.Button(row, "IDENT", device.Identify, Theme.FontSmall, Theme.Text, new Vector2(70, StepKeySize));
         }
 
         private void BuildEq(RectTransform parent, PageContext context, RATSpeaker device)
