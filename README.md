@@ -213,6 +213,8 @@ to the others. Speaker volumes and EQ are shared.
 ## Configuration
 
 - **Music folder:** set in the mod's Unity Mod Manager settings. Empty uses your Windows Music folder.
+- **PC Audio boost:** set in the mod's Unity Mod Manager settings, 0 to 24 dB, by default 0. Raise it if
+  PC Audio plays too quietly, lower it if it sounds distorted. A change is heard right away.
 - **Radio stations:** `radio/stations.json` in the mod folder. See `radio/README.txt` for the format. The
   file is created on first use and never replaced by an update.
 - **Pages:** every page is a JSON file in `pages/`. Edit one, switch the tablet off and on, and it is

@@ -8,7 +8,14 @@ public class CaptureBoostTests
     {
         Assert.Equal(1f, CaptureBoost.Gain(0));
         Assert.Equal(2f, CaptureBoost.Gain(6), 1);
-        Assert.Equal(7.94f, CaptureBoost.Gain(CaptureBoost.Db), 2);
+        Assert.Equal(7.94f, CaptureBoost.Gain(18), 2);
+    }
+
+    [Fact]
+    public void GainStaysWithinTheSliderRange()
+    {
+        Assert.Equal(1f, CaptureBoost.Gain(-6));
+        Assert.Equal(CaptureBoost.Gain(CaptureBoost.MaxDb), CaptureBoost.Gain(CaptureBoost.MaxDb + 12));
     }
 
     [Fact]

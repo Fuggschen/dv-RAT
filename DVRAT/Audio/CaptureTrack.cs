@@ -22,7 +22,6 @@ namespace DVRAT
         private volatile string _mediaStatus;
         private volatile string _title;
         private volatile string _problem;
-        private static readonly float Gain = CaptureBoost.Gain(CaptureApps.UnderWine ? CaptureBoost.LinuxDb : CaptureBoost.Db);
 
         // Under Wine: the helper connection, and commands queued until it connects.
         private readonly bool _linux = CaptureApps.UnderWine;
@@ -152,7 +151,9 @@ namespace DVRAT
             }
         }
 
-        protected override void Shape(float[] samples, int count) => CaptureBoost.Apply(samples, count, Gain);
+        // Read per buffer, so a slider change is heard while the program plays.
+        protected override void Shape(float[] samples, int count) =>
+            CaptureBoost.Apply(samples, count, CaptureBoost.Gain(RATMain.Settings?.PcAudioBoostDb ?? CaptureBoost.DefaultDb));
 
         protected override string Failure(int exitCode) => _problem ?? $"ratcapture ended with code {exitCode}";
 
