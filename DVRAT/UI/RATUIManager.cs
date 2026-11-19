@@ -117,7 +117,11 @@ namespace DVRAT
             _dimmer = UIFactory.Fill(canvasRoot, Color.clear, "Dimmer");
 
             // Navigating to a page starts its lists on the first screen.
-            _navigator.Navigated += id => _tablet?.Session.ResetLists(id);
+            _navigator.Navigated += id =>
+            {
+                _tablet?.Session.ResetLists(id);
+                ResetLeftPages(id);
+            };
             _navigator.Changed += id =>
             {
                 _startMenu.Close();
@@ -127,6 +131,24 @@ namespace DVRAT
             };
 
             ShowBlank();
+        }
+
+        /// <summary>Resets <see cref="Page.LeaveVars"/> of each page that going to <paramref name="id"/> leaves, see <see cref="Navigator.Leaves"/>.</summary>
+        private void ResetLeftPages(string id)
+        {
+            if (_tablet == null) return;
+            string targetId = _registry.Resolve(id);
+            bool changed = false;
+            foreach (string pageId in _registry.Ids.ToList())
+            {
+                var page = _registry.Get(pageId);
+                if (page == null || page.LeaveVars.Count == 0) continue;
+                if (Navigator.Leaves(targetId, pageId, _navigator.History, p => _registry.Get(p)?.ParentId))
+                    changed |= _tablet.Session.ResetVars(pageId, page.LeaveVars);
+            }
+            // A variable may pick what the tablet reads, e.g. the shown loco.
+            if (changed)
+                _tablet.RefreshDataNow();
         }
 
         // Coroutines stop with the object, so a press would never end.

@@ -4,11 +4,13 @@
   "parent": "train",
   "order": 20,
   "openLabel": "Overview",
+  "vars": { "car": "" },
+  "resetOnLeave": [ "car" ],
   "rows": [
     { "type": "text", "style": "dim", "text": "Loading train data...", "when": "!train.loaded" },
     { "type": "text", "style": "dim", "text": "No locomotive in this train.", "when": "train.loaded && !loco.present" },
 
-    { "type": "field", "label": "Type", "labelWidth": 220, "value": "{loco.name}", "when": "loco.present" },
+    { "type": "field", "label": "Type", "labelWidth": 220, "value": "{loco.name}  {loco.id}", "when": "loco.present" },
     { "type": "field", "label": "Engine", "labelWidth": 220, "value": "{loco.engine}", "when": "loco.hasEngine" },
     { "type": "field", "label": "Fees", "labelWidth": 220, "value": "{loco.fee}", "when": "loco.hasFee && !loco.feeIsService" },
     { "type": "field", "label": "Service", "labelWidth": 220, "value": "{loco.fee}", "when": "loco.hasFee && loco.feeIsService" },

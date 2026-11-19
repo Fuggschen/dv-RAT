@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DVRAT
 {
@@ -72,6 +73,24 @@ namespace DVRAT
             if (_history.Count == 0)
                 _history.Add(_homeId);
             Changed?.Invoke(Current);
+        }
+
+        /// <summary>
+        /// True when going to <paramref name="targetId"/> leaves <paramref name="pageId"/> and its subpages: the target is outside them and is
+        /// one of the page's parents, or the page is no longer in <paramref name="history"/>. Links out of the subpages, such as a car type page,
+        /// do not leave, as Back returns from them.
+        /// </summary>
+        public static bool Leaves(string targetId, string pageId, IReadOnlyList<string> history, Func<string, string> parentOf) =>
+            !IsWithin(targetId, pageId, parentOf) && (IsWithin(pageId, targetId, parentOf) || !history.Contains(pageId));
+
+        /// <summary>True when <paramref name="id"/> is <paramref name="rootId"/> or one of its subpages at any depth.</summary>
+        public static bool IsWithin(string id, string rootId, Func<string, string> parentOf)
+        {
+            var seen = new HashSet<string>();
+            for (string current = id; current != null && seen.Add(current); current = parentOf(current))
+                if (current == rootId)
+                    return true;
+            return false;
         }
 
         public void Home()

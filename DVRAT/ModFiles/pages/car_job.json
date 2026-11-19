@@ -1,0 +1,11 @@
+{
+  "id": "car_job",
+  "title": "Job",
+  "parent": "train",
+  "parentKey": false,
+  "startMenu": false,
+  "vars": { "job": "" },
+  "rows": [
+    { "type": "widget", "name": "job", "var": "job" }
+  ]
+}

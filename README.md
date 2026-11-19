@@ -62,6 +62,9 @@ Speed, mass, length, braking distance, grade and altitude. The car list has thre
   brake temperature and handbrakes per car. With the Realistic Brakes mod, each car's valve type too.
 - **Stress:** mass, how close each car is to derailing, and coupler forces.
 
+A tap on a loco opens the Locomotive page for that loco; its subpages follow it until you leave them.
+A tap on a car with a job opens that job, as a tap on a car on the Yard page does.
+
 Subpages:
 
 - **Locomotive:** controls (throttle, reverser, cutoff, brakes), tractive effort, power, adhesion,

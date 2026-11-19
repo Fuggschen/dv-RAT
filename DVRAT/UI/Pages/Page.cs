@@ -39,6 +39,9 @@ namespace DVRAT
         /// <summary>False when the Start menu does not list this page.</summary>
         public bool InStartMenu { get; protected set; } = true;
 
+        /// <summary>Page variables and the values they go back to when the tablet leaves this page and its subpages.</summary>
+        public IReadOnlyDictionary<string, string> LeaveVars { get; protected set; } = new Dictionary<string, string>();
+
         /// <summary>True for a page that only lists subpages. The Start menu shows them without the page.</summary>
         public virtual bool IsMenu => false;
 

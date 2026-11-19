@@ -24,6 +24,10 @@
       ] },
 
     { "type": "list", "source": "train.{page.list}", "empty": "No cars.", "when": "train.onTrain && page.view=cars",
+      "click": [
+        { "when": "item.isLoco", "link": "loco", "linkVars": { "car": "{item.id}" } },
+        { "when": "item.hasJob", "link": "car_job", "linkVars": { "job": "{item.job}" } }
+      ],
       "columns": [
         { "header": "#", "text": "{item.pos}", "width": 50 },
         { "header": "Car", "text": "{item.name}", "flex": 1 },
@@ -34,6 +38,10 @@
       ] },
 
     { "type": "list", "source": "train.{page.list}", "empty": "No cars.", "when": "train.onTrain && page.view=brakes && train.realisticBrakes",
+      "click": [
+        { "when": "item.isLoco", "link": "loco", "linkVars": { "car": "{item.id}" } },
+        { "when": "item.hasJob", "link": "car_job", "linkVars": { "job": "{item.job}" } }
+      ],
       "columns": [
         { "header": "#", "text": "{item.pos}", "width": 50 },
         { "header": "Car", "text": "{item.name}", "flex": 1 },
@@ -48,6 +56,10 @@
       ] },
 
     { "type": "list", "source": "train.{page.list}", "empty": "No cars.", "when": "train.onTrain && page.view=brakes && !train.realisticBrakes",
+      "click": [
+        { "when": "item.isLoco", "link": "loco", "linkVars": { "car": "{item.id}" } },
+        { "when": "item.hasJob", "link": "car_job", "linkVars": { "job": "{item.job}" } }
+      ],
       "columns": [
         { "header": "#", "text": "{item.pos}", "width": 50 },
         { "header": "Car", "text": "{item.name}", "flex": 1 },
@@ -61,6 +73,10 @@
       ] },
 
     { "type": "list", "source": "train.{page.list}", "empty": "No cars.", "when": "train.onTrain && page.view=stress",
+      "click": [
+        { "when": "item.isLoco", "link": "loco", "linkVars": { "car": "{item.id}" } },
+        { "when": "item.hasJob", "link": "car_job", "linkVars": { "job": "{item.job}" } }
+      ],
       "columns": [
         { "header": "#", "text": "{item.pos}", "width": 50 },
         { "header": "Car", "text": "{item.name}", "flex": 1 },

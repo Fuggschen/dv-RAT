@@ -30,6 +30,9 @@ namespace DVRAT
         /// <summary>Start values of the page variables, read as <c>page.name</c>.</summary>
         [JsonProperty("vars")] public Dictionary<string, string> Vars { get; set; }
 
+        /// <summary>Page variables set back to their <see cref="Vars"/> value, or empty, when the tablet leaves this page and its subpages, see <see cref="Navigator.Leaves"/>.</summary>
+        [JsonProperty("resetOnLeave")] public List<string> ResetOnLeave { get; set; }
+
         [JsonProperty("rows")] public List<RowDefinition> Rows { get; set; }
         [JsonProperty("softKeys")] public List<SoftKeyDefinition> SoftKeys { get; set; }
     }
@@ -86,8 +89,13 @@ namespace DVRAT
         /// </summary>
         [JsonProperty("var")] public string Var { get; set; }
 
-        /// <summary>For "list": action of a row tap, with <c>item</c> in its templates. Takes <c>set</c>, <c>link</c> or <c>planJobs</c>.</summary>
-        [JsonProperty("click")] public SoftKeyDefinition Click { get; set; }
+        /// <summary>
+        /// For "list": action of a row tap, with <c>item</c> in its templates. Takes <c>set</c>, <c>link</c>, <c>linkVars</c> or <c>planJobs</c>.
+        /// One key or a list of keys; a row takes the first whose <c>when</c> holds for its item, and with none it is not tappable.
+        /// </summary>
+        [JsonProperty("click")]
+        [JsonConverter(typeof(OneOrManyConverter<SoftKeyDefinition>))]
+        public List<SoftKeyDefinition> Click { get; set; }
 
         /// <summary>For "checklist": items failing this condition show unticked and locked.</summary>
         [JsonProperty("enabledWhen")] public string EnabledWhen { get; set; }
@@ -125,7 +133,7 @@ namespace DVRAT
         /// <summary>Page to open, may contain placeholders: <c>station:{route.nextStationId}</c>.</summary>
         [JsonProperty("link")] public string Link { get; set; }
 
-        /// <summary>Variables of the linked page to set before it opens.</summary>
+        /// <summary>Variables of the linked page to set before it opens. Values are templates, e.g. <c>{"car": "{item.id}"}</c>.</summary>
         [JsonProperty("linkVars")] public Dictionary<string, string> LinkVars { get; set; }
 
         /// <summary>
@@ -152,6 +160,21 @@ namespace DVRAT
         /// Runs before <see cref="Set"/> and <see cref="Link"/>.
         /// </summary>
         [JsonProperty("planJobs")] public string PlanJobs { get; set; }
+    }
+
+    /// <summary>Reads a single object or an array of them into a list.</summary>
+    public class OneOrManyConverter<T> : JsonConverter<List<T>>
+    {
+        public override List<T> ReadJson(JsonReader reader, System.Type objectType, List<T> existingValue, bool hasExistingValue,
+            JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            if (reader.TokenType == JsonToken.StartArray) return serializer.Deserialize<List<T>>(reader);
+            return new List<T> { serializer.Deserialize<T>(reader) };
+        }
+
+        public override void WriteJson(JsonWriter writer, List<T> value, JsonSerializer serializer) =>
+            serializer.Serialize(writer, value);
     }
 
     public static class PageDefinitions
@@ -186,6 +209,7 @@ namespace DVRAT
             page.Rows = page.Rows ?? new List<RowDefinition>();
             page.SoftKeys = page.SoftKeys ?? new List<SoftKeyDefinition>();
             page.Vars = page.Vars ?? new Dictionary<string, string>();
+            page.ResetOnLeave = page.ResetOnLeave ?? new List<string>();
 
             for (int i = 0; i < page.Rows.Count; i++)
                 CheckRow(page.Rows[i], $"{fileName}: row {i + 1}", knownWidgets, problems);
@@ -207,6 +231,8 @@ namespace DVRAT
                 problems.Add($"{where}: unknown style \"{row.Style}\"");
             if (row.Type == "list" && (string.IsNullOrEmpty(row.Source) || row.Columns == null || row.Columns.Count == 0))
                 problems.Add($"{where}: a list needs \"source\" and \"columns\"");
+            if (row.Click != null && (row.Type != "list" || row.Click.Any(k => k == null)))
+                problems.Add($"{where}: \"click\" only works on lists and takes keys, not null");
             if (row.Type != "list" && (row.Filter != null || row.Sort != null || row.Descending != null || row.Limit != null))
                 problems.Add($"{where}: \"filter\", \"sort\", \"descending\" and \"limit\" only work on lists");
             if (row.Type == "widget" && !knownWidgets.Contains(row.Name ?? ""))

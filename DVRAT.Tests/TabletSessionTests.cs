@@ -102,6 +102,20 @@ public class TabletSessionTests
     }
 
     [Fact]
+    public void ResetVarsReportsOnlyAChange()
+    {
+        var session = new TabletSession();
+        var reset = new Dictionary<string, string> { [TabletSession.LocoCarVar] = "" };
+        session.Vars(TabletSession.LocoPageId, null)[TabletSession.LocoCarVar] = "L-002";
+        Assert.Equal("L-002", session.ChosenLoco);
+
+        Assert.True(session.ResetVars(TabletSession.LocoPageId, reset));
+        Assert.Equal("", session.ChosenLoco);
+        Assert.False(session.ResetVars(TabletSession.LocoPageId, reset));
+        Assert.False(session.ResetVars("unvisited", reset));
+    }
+
+    [Fact]
     public void StopwatchStopsAndResets()
     {
         var watch = new Stopwatch();

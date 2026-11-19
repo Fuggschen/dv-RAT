@@ -175,6 +175,22 @@ public class PageDefinitionTests
         Assert.Null(PageDefinitions.Parse(@"{ ""title"": ""x"" }", "b.json", PageDefinitions.WidgetNames, problems));
         Assert.Equal(2, problems.Count);
     }
+
+    [Fact]
+    public void ClickIsOneKeyOrAList()
+    {
+        var problems = new List<string>();
+
+        var one = PageDefinitions.Parse(@"{ ""id"": ""x"", ""rows"": [ { ""type"": ""list"", ""source"": ""train.cars"",
+            ""columns"": [ { ""text"": ""{item.id}"" } ], ""click"": { ""link"": ""loco"" } } ] }", "x.json", PageDefinitions.WidgetNames, problems);
+        var many = PageDefinitions.Parse(@"{ ""id"": ""y"", ""rows"": [ { ""type"": ""list"", ""source"": ""train.cars"",
+            ""columns"": [ { ""text"": ""{item.id}"" } ], ""click"": [ { ""when"": ""item.isLoco"", ""link"": ""loco"" }, { ""link"": ""car_job"" } ] } ] }",
+            "y.json", PageDefinitions.WidgetNames, problems);
+
+        Assert.Empty(problems);
+        Assert.Equal("loco", Assert.Single(one.Rows[0].Click).Link);
+        Assert.Equal(new[] { "loco", "car_job" }, many.Rows[0].Click.Select(k => k.Link));
+    }
 }
 
 /// <summary>Catches typos in the shipped pages/ that would only show at runtime.</summary>
@@ -398,11 +414,13 @@ public class ShippedPageTests
         var itemRoot = PageBindings.WithItem(root, items[0]);
         Template.Evaluate(row.Filter, itemRoot, missing);
         Template.Format(row.Value, itemRoot, missing);
-        if (row.Click != null)
+        foreach (var click in row.Click ?? new List<SoftKeyDefinition>())
         {
-            Template.Format(row.Click.Link, itemRoot, missing);
-            foreach (string setValue in (row.Click.Set ?? new Dictionary<string, string>()).Values)
-                Template.Format(setValue, itemRoot, missing);
+            Template.Evaluate(click.When, itemRoot, missing);
+            Template.Format(click.Link, itemRoot, missing);
+            foreach (string template in (click.Set ?? new Dictionary<string, string>()).Values
+                .Concat((click.LinkVars ?? new Dictionary<string, string>()).Values))
+                Template.Format(template, itemRoot, missing);
         }
         foreach (var column in row.Columns)
         {

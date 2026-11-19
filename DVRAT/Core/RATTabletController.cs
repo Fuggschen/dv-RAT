@@ -618,7 +618,7 @@ namespace DVRAT
                     _lastCarVelocity = null;
                 }
                 using (Timing.Measure("Reading the train"))
-                    CurrentTrainData = _trainData?.Refresh(car);
+                    CurrentTrainData = _trainData?.Refresh(car, Session.ChosenLoco);
                 using (Timing.Measure("Reading the route"))
                     CurrentRouteData = _routeData?.Refresh(car, _routePlanner?.LastRoute,
                         Session.Setting("showSwitchDamage") != "false", Session.Setting("showTrackDamage") != "false");

@@ -42,6 +42,8 @@ namespace DVRAT
             InStartMenu = definition.StartMenu;
             NeedsSignal = definition.Remote;
             _vars = new Dictionary<string, string>(definition.Vars);
+            LeaveVars = definition.ResetOnLeave.Distinct()
+                .ToDictionary(name => name, name => definition.Vars.TryGetValue(name, out string value) ? value : "");
             // Matches any binding into the fees in any row or soft key.
             _usesFees = JsonConvert.SerializeObject(definition).Contains("world.fees");
         }
@@ -163,6 +165,8 @@ namespace DVRAT
             // Values are templates, e.g. "{settings.brightness + 10}".
             var set = (key.Set ?? new Dictionary<string, string>())
                 .ToDictionary(e => e.Key, e => Template.Format(e.Value, root, _pendingMissing));
+            var linkVars = (key.LinkVars ?? new Dictionary<string, string>())
+                .ToDictionary(e => e.Key, e => Template.Format(e.Value, root, _pendingMissing));
             if (target == null && jobIds == null && set.Count == 0) return null;
 
             return () =>
@@ -190,9 +194,13 @@ namespace DVRAT
                     context.Rebuild();
                     return;
                 }
-                if (key.LinkVars != null && context.Tablet != null)
-                    foreach (var entry in key.LinkVars)
+                if (linkVars.Count > 0 && context.Tablet != null)
+                {
+                    foreach (var entry in linkVars)
                         context.Tablet.Session.Vars(target, null)[entry.Key] = entry.Value;
+                    // A variable may pick what the tablet reads, e.g. the shown loco.
+                    context.Tablet.RefreshDataNow();
+                }
                 context.Navigator.Open(target);
             };
         }
@@ -510,7 +518,11 @@ namespace DVRAT
                         if (!string.IsNullOrEmpty(row.Var))
                             SelectableRow(cells, context, row.Var, Template.Format(row.Value ?? "{item.id}", itemRoot, _pendingMissing));
                         else if (row.Click != null)
-                            ClickableRow(cells, context, row.Click, itemRoot);
+                        {
+                            var click = row.Click.FirstOrDefault(k => Template.Evaluate(k.When, itemRoot, _pendingMissing));
+                            if (click != null)
+                                ClickableRow(cells, context, click, itemRoot);
+                        }
                         ListCells(cells, row.Columns, itemRoot);
                     });
             });
@@ -539,7 +551,7 @@ namespace DVRAT
                 Template.Format(key.Link ?? "", itemRoot, _pendingMissing),
                 Template.Format(key.PlanJobs ?? "", itemRoot, _pendingMissing),
             };
-            does.AddRange((key.Set ?? new Dictionary<string, string>())
+            does.AddRange((key.Set ?? new Dictionary<string, string>()).Concat(key.LinkVars ?? new Dictionary<string, string>())
                 .Select(entry => entry.Key + "=" + Template.Format(entry.Value, itemRoot, _pendingMissing)));
             cells.Clickable(() => KeyAction(key, itemRoot, context)?.Invoke(), string.Join(";", does));
         }

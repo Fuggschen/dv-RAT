@@ -20,7 +20,9 @@ namespace DVRAT
         private readonly ResourceRates _resourceRates = new ResourceRates();
 
         /// <param name="playerCar">See <see cref="RATTabletController.TrainCar"/>.</param>
-        public TrainData Refresh(TrainCar playerCar)
+        /// <param name="chosenLocoId">Car ID of the loco to read as <see cref="TrainData.Locomotive"/>, see <see cref="TabletSession.ChosenLoco"/>.
+        /// When it is not in the train, the tablet's own car or the closest loco.</param>
+        public TrainData Refresh(TrainCar playerCar, string chosenLocoId = null)
         {
             var data = new TrainData();
 
@@ -38,8 +40,10 @@ namespace DVRAT
                 float totalMass = 0f;
                 float totalLength = 0f;
 
-                // With several locos, show the tablet's own car or the closest loco.
-                int own = cars.IndexOf(playerCar);
+                // With several locos, show the chosen one, else the tablet's own car or the closest loco.
+                int own = cars.FindIndex(c => c != null && !string.IsNullOrEmpty(chosenLocoId) && c.IsLoco && c.ID == chosenLocoId);
+                if (own < 0)
+                    own = cars.IndexOf(playerCar);
                 int bestDistance = int.MaxValue;
                 for (int i = 0; i < cars.Count; i++)
                 {

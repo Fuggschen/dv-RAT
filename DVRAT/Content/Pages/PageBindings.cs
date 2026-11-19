@@ -569,6 +569,7 @@ namespace DVRAT
             return new Dictionary<string, object>
             {
                 ["present"] = loco != null,
+                ["id"] = loco?.CarId ?? "",
                 ["type"] = loco?.CarType ?? "",
                 ["name"] = loco?.CarName ?? loco?.CarType ?? "",
                 ["hasEngine"] = loco?.HasEngine ?? false,

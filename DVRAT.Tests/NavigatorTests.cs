@@ -4,6 +4,67 @@ using Xunit;
 
 public class NavigatorTests
 {
+    private static readonly Dictionary<string, string> Parents = new Dictionary<string, string>
+    {
+        ["train"] = "home", ["loco"] = "train", ["supplies"] = "loco", ["car_job"] = "train",
+        ["world"] = "home", ["loco_ports"] = "world", ["rollingstock"] = "info", ["car:DE2"] = "rollingstock", ["info"] = "home",
+    };
+
+    private static string ParentOf(string id) => Parents.TryGetValue(id, out string parent) ? parent : null;
+
+    /// <summary>The pages that reset the loco chosen by opening "loco", as RATUIManager does it.</summary>
+    private static List<string> Resets(params string[] steps)
+    {
+        var nav = new Navigator("home");
+        var resets = new List<string>();
+        bool chosen = false;
+        nav.Navigated += id =>
+        {
+            if (chosen && Navigator.Leaves(id, "loco", nav.History, ParentOf))
+            {
+                chosen = false;
+                resets.Add(id);
+            }
+        };
+        nav.Home();
+        foreach (string step in steps)
+        {
+            if (step == "back")
+            {
+                nav.Back();
+                continue;
+            }
+            chosen |= step == "loco";
+            nav.Open(step);
+        }
+        return resets;
+    }
+
+    [Fact]
+    public void ChosenLocoStaysOnItsSubpagesAndLinksOut()
+    {
+        Assert.Empty(Resets("train", "loco", "supplies", "loco_ports", "back", "back", "car:DE2", "back"));
+    }
+
+    [Fact]
+    public void ChosenLocoResetsWhenTrainOrHomeIsReached()
+    {
+        Assert.Equal(new[] { "train" }, Resets("train", "loco", "back"));
+        Assert.Equal(new[] { "train" }, Resets("train", "loco", "supplies", "train"));
+        Assert.Equal(new[] { "home" }, Resets("train", "loco", "home"));
+        Assert.Equal(new[] { "train" }, Resets("train", "loco", "car:DE2", "train"));
+    }
+
+    [Fact]
+    public void LeavesChecksTheTargetAgainstThePage()
+    {
+        var history = new List<string> { "home", "world" };
+
+        Assert.True(Navigator.Leaves("world", "loco", history, ParentOf));
+        Assert.False(Navigator.Leaves("supplies", "loco", history, ParentOf));
+        Assert.True(Navigator.IsWithin("supplies", "train", ParentOf));
+    }
+
     [Fact]
     public void StartsAtHomeWithoutHistory()
     {

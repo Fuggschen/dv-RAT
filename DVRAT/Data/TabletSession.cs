@@ -88,6 +88,27 @@ namespace DVRAT
             return vars;
         }
 
+        /// <summary>Sets the page's variables to <paramref name="values"/>. True when one changed.</summary>
+        public bool ResetVars(string pageId, IReadOnlyDictionary<string, string> values)
+        {
+            if (values.Count == 0 || !PageVars.TryGetValue(pageId, out var vars)) return false;
+            bool changed = false;
+            foreach (var entry in values)
+            {
+                if (vars.TryGetValue(entry.Key, out string current) && current == entry.Value) continue;
+                vars[entry.Key] = entry.Value;
+                changed = true;
+            }
+            return changed;
+        }
+
+        public const string LocoPageId = "loco";
+        public const string LocoCarVar = "car";
+
+        /// <summary>Car ID of the loco the Locomotive page and its subpages show. Empty means the tablet's own or the nearest.</summary>
+        public string ChosenLoco =>
+            PageVars.TryGetValue(LocoPageId, out var vars) && vars.TryGetValue(LocoCarVar, out string id) ? id : "";
+
         /// <summary>List screens, open sub-views and scroll positions. Not saved. Write it only on player actions, never while drawing, so multiplayer copies stay equal.</summary>
         [JsonIgnore] public Dictionary<string, Dictionary<string, string>> ViewVars { get; set; } =
             new Dictionary<string, Dictionary<string, string>>();
