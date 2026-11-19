@@ -146,7 +146,7 @@ namespace DVRAT
                                 else
                                     info.TotalMass += (trainCar.carLivery?.parentType?.mass ?? 0f) / 1000f;
 
-                                info.TotalLength += trainCar.InterCouplerDistance * 2f;
+                                info.TotalLength += trainCar.InterCouplerDistance;
                             }
                             else
                             {

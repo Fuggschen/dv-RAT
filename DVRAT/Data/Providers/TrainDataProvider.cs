@@ -374,7 +374,7 @@ namespace DVRAT
         {
             try
             {
-                return car.InterCouplerDistance * 2f;
+                return car.InterCouplerDistance;
             }
             catch
             {
