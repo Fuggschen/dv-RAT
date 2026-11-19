@@ -42,7 +42,7 @@ namespace DVRAT.Patches
             controller.LoadState(src?[SaveKey]);
         }
 
-        /// <summary>Job marks belong to the player, not a tablet.</summary>
+        /// <summary>Job marks and odometers belong to the savegame, not a tablet.</summary>
         [HarmonyPatch(typeof(SaveGameManager), "DoSaveIO")]
         [HarmonyPrefix]
         public static void OnGameSaving(SaveGameData data)
@@ -50,6 +50,7 @@ namespace DVRAT.Patches
             if (data == null) return;
             var mod = data.GetJObject(SaveKey) ?? new JObject();
             ActiveJobStore.WriteTo(mod);
+            Odometer.WriteTo(mod);
             data.SetJObject(SaveKey, mod);
         }
 
@@ -57,7 +58,9 @@ namespace DVRAT.Patches
         [HarmonyPostfix]
         public static void OnGameLoading(SaveGameManager __instance)
         {
-            ActiveJobStore.ReadFrom(__instance?.data?.GetJObject(SaveKey));
+            var mod = __instance?.data?.GetJObject(SaveKey);
+            ActiveJobStore.ReadFrom(mod);
+            Odometer.ReadFrom(mod);
         }
     }
 }

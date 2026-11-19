@@ -166,6 +166,9 @@ namespace DVRAT
         /// <summary>The player's own loco: the fee is paid at service, not at the career manager.</summary>
         public bool FeeIsService { get; set; }
 
+        /// <summary>Distance the loco has run in this savegame, see <see cref="Odometer"/>. Null on a client before the host sent it.</summary>
+        public double? OdometerKm { get; set; }
+
         /// <summary>In °C. Null without traction motors.</summary>
         public float? TmTemperature { get; set; }
 

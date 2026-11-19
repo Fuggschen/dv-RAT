@@ -85,6 +85,12 @@ namespace DVRAT.Multiplayer
         public string Json { get; set; }
     }
 
+    /// <summary>The host's loco odometers, see <see cref="Odometer.Describe"/>.</summary>
+    public class RatOdometerPacket : IPacket
+    {
+        public string Json { get; set; }
+    }
+
     public class RatUnmountPacket : IPacket
     {
         /// <summary>See <see cref="RatMountPacket.Seq"/>.</summary>

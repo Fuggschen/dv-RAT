@@ -12,6 +12,7 @@
     { "type": "field", "label": "Engine", "labelWidth": 220, "value": "{loco.engine}", "when": "loco.hasEngine" },
     { "type": "field", "label": "Fees", "labelWidth": 220, "value": "{loco.fee}", "when": "loco.hasFee && !loco.feeIsService" },
     { "type": "field", "label": "Service", "labelWidth": 220, "value": "{loco.fee}", "when": "loco.hasFee && loco.feeIsService" },
+    { "type": "field", "label": "Odometer", "labelWidth": 220, "value": "{loco.odometerKm:F1} km", "when": "loco.hasOdometer" },
 
     { "type": "divider", "when": "loco.present" },
     { "type": "heading", "text": "Controls", "when": "loco.present" },

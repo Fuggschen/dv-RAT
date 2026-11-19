@@ -38,6 +38,7 @@ namespace DVRAT
             {
                 RATGadgetManager.Initialize();
                 MultiplayerSync.Initialize();
+                Odometer.Initialize();
                 WorldStreamingInit.LoadingFinished += GameContent.OnWorldLoaded;
                 WorldStreamingInit.LoadingFinished += CatenaryLayout.OnWorldLoaded;
                 WorldStreamingInit.LoadingFinished += TrackSigns.OnWorldLoaded;
@@ -47,6 +48,7 @@ namespace DVRAT
             {
                 RATGadgetManager.Shutdown();
                 MultiplayerSync.Shutdown();
+                Odometer.Shutdown();
                 WorldStreamingInit.LoadingFinished -= GameContent.OnWorldLoaded;
                 WorldStreamingInit.LoadingFinished -= CatenaryLayout.OnWorldLoaded;
                 WorldStreamingInit.LoadingFinished -= TrackSigns.OnWorldLoaded;

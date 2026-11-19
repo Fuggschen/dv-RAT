@@ -85,7 +85,11 @@ namespace DVRAT
                 data.Braking = CalculateBrakingInfo(data, speedMs);
                 data.Electric = CatenaryMods.Read(data.Locomotive, data.Cars, cars);
                 if (data.Locomotive != null)
-                    ReadFee(cars.FirstOrDefault(c => c != null && c.ID == data.Locomotive.CarId), data.Locomotive);
+                {
+                    var locoCar = cars.FirstOrDefault(c => c != null && c.ID == data.Locomotive.CarId);
+                    ReadFee(locoCar, data.Locomotive);
+                    data.Locomotive.OdometerKm = Odometer.KmOf(locoCar);
+                }
             }
             catch (Exception ex)
             {

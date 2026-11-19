@@ -91,6 +91,7 @@ namespace DVRAT.Multiplayer
         private const float FeeCheckSeconds = 2f;
         private static uint _nextFeeCheck;
         private static string _sentFees;
+        private static string _sentOdometers;
 
         private static void OnTick(uint tick)
         {
@@ -98,9 +99,17 @@ namespace DVRAT.Multiplayer
             _nextFeeCheck = tick + (uint)(FeeCheckSeconds * MultiplayerAPI.Instance.TICK_RATE);
             if (_server.PlayerCount <= 1) return;
             string fees = SharedFees.Describe();
-            if (fees == _sentFees) return;
-            _sentFees = fees;
-            _server.SendPacketToAll(new RatFeesPacket { Json = fees }, excludeSelf: true);
+            if (fees != _sentFees)
+            {
+                _sentFees = fees;
+                _server.SendPacketToAll(new RatFeesPacket { Json = fees }, excludeSelf: true);
+            }
+            string odometers = Odometer.Describe();
+            if (odometers != _sentOdometers)
+            {
+                _sentOdometers = odometers;
+                _server.SendPacketToAll(new RatOdometerPacket { Json = odometers }, excludeSelf: true);
+            }
         }
 
         private static void OnServerStarted(IServer server)
@@ -108,6 +117,7 @@ namespace DVRAT.Multiplayer
             _server = server;
             _seq = 0;
             _sentFees = null;
+            _sentOdometers = null;
             _nextFeeCheck = 0;
             Applied.Clear();
             server.RegisterPacket<RatMountPacket>(OnMountFromClient);
@@ -146,6 +156,7 @@ namespace DVRAT.Multiplayer
             client.RegisterPacket<RatUnmountPacket>(OnUnmountFromHost);
             client.RegisterPacket<RatNamePacket>(packet => _name = packet.Name);
             client.RegisterPacket<RatFeesPacket>(packet => SharedFees.Receive(packet.Json));
+            client.RegisterPacket<RatOdometerPacket>(packet => Odometer.Receive(packet.Json));
             client.RegisterPacket<RatSessionPacket>(OnSessionFromHost);
             client.RegisterPacket<RatSpeakerPacket>(OnSpeakerFromHost);
             client.RegisterPacket<RatMediaCommandPacket>(packet => MultiplayerSync.RunMediaCommand(packet.Id, packet.Command));
@@ -157,6 +168,7 @@ namespace DVRAT.Multiplayer
         {
             _client = null;
             SharedFees.Clear();
+            Odometer.Clear();
             TabletSync.ForgetPending();
             SpeakerSync.ForgetPending();
             RATMain.Log("Multiplayer: left the game");
@@ -379,6 +391,7 @@ namespace DVRAT.Multiplayer
             if (player.IsHost) return;
             _server.SendPacketToPlayer(new RatNamePacket { Name = player.Username }, player);
             _server.SendPacketToPlayer(new RatFeesPacket { Json = _sentFees ?? SharedFees.Describe() }, player);
+            _server.SendPacketToPlayer(new RatOdometerPacket { Json = _sentOdometers ?? Odometer.Describe() }, player);
             int sent = 0;
             foreach (var gadget in GadgetMounts.AllMounted())
             {

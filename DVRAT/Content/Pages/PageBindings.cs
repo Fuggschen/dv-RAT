@@ -327,6 +327,8 @@ namespace DVRAT
                 ["feeUsd"] = loco?.Fee ?? 0f,
                 ["fee"] = "$" + (loco?.Fee ?? 0f).ToString("N0", CultureInfo.InvariantCulture),
                 ["feeIsService"] = loco?.FeeIsService ?? false,
+                ["hasOdometer"] = loco?.OdometerKm != null,
+                ["odometerKm"] = loco?.OdometerKm ?? 0.0,
                 ["hasTmTemperature"] = loco?.TmTemperature != null,
                 ["tmTemperatureC"] = loco?.TmTemperature ?? 0f,
                 ["tmTemperature"] = Format.Temperature(loco?.TmTemperature ?? 0f),

@@ -156,6 +156,8 @@ Engine (diesel only): `hasEngine`, `engineOn`, `engine` (text), `rpm`; `hasTempe
 Fee: `hasFee` (false for a loco nobody charges for, e.g. one spawned in sandbox), `feeUsd`, `fee` (text, tax included,
 as the career manager lists it; electricity and other modded resources are part of it), `feeIsService` (the player's
 own loco, paid when it is serviced).
+Odometer: `hasOdometer` (false on a multiplayer client until the host sent it), `odometerKm` (distance the loco has
+run in this savegame, counted for every loco whether a tablet is aboard or not).
 Traction motors (diesel-electric and electric): `hasTmTemperature`, `tmTemperatureC`, `tmTemperature` (text),
 `tmOverheatC` (above it the motors overheat and can burn out; 120 when the loco does not say).
 Steam: `hasBoiler`, `boilerBar`, `boilerWaterPct`, `hasFirebox`, `fireOn`, `fireboxC`, `hasCutoff`, `cutoffPct`,
