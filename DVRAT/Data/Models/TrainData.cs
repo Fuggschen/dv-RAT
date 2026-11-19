@@ -189,6 +189,9 @@ namespace DVRAT
         public bool FireOn { get; set; }
         public float FireboxTemperature { get; set; } // °C
 
+        /// <summary>Null unless the Realistic Firing mod fires this loco.</summary>
+        public FiringData Firing { get; set; }
+
         /// <summary>Fuel, oil, sand, water, coal and charge, keyed by those names in lower case.</summary>
         public Dictionary<string, ResourceLevel> Resources { get; set; } = new Dictionary<string, ResourceLevel>();
 

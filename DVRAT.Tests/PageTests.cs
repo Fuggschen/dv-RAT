@@ -192,7 +192,19 @@ public class ShippedPageTests
                 WorkingMotors = 3, TotalMotors = 4,
                 Fuses = { new FuseState { Id = "electronics.MAIN_FUSE", On = true } },
             },
-            Ports ={ new SimPort { Id = "engine.RPM", Type = "RPM", Value = 800 } } };
+            Ports ={ new SimPort { Id = "engine.RPM", Type = "RPM", Value = 800 } },
+            // Coal and oil sections together, so every Firing list has an item.
+            Firing = new FiringData
+            {
+                Fuel = "Coal",
+                Grate = new GrateReading
+                {
+                    ThinZone = "FrontLeft", ZoneReferenceKg = 20,
+                    Zones = Enumerable.Range(0, 9).Select(i => new GrateZoneReading { Name = "Zone" + i, CoalKg = 20 }).ToList(),
+                },
+                Burner = new BurnerReading { Lighting = { new LightingStep { Title = "Steam", How = "Open the shed line", Current = true } } },
+                Injectors = { new InjectorReading { Name = "right", State = "Working", SteamValve = "Feed", WaterValvePct = 60 } },
+            } };
         var wagon = new CarInfo { CarId = "W-1", CarType = "FlatbedStakes", Mass = 30, LoadedCargo = "Logs", CargoAmount = 20 };
         var train = new TrainData
         {

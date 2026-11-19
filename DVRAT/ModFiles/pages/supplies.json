@@ -24,10 +24,15 @@
     { "type": "divider", "when": "loco.hasEngine || loco.hasBoiler" },
     { "type": "field", "label": "Engine", "labelWidth": 220, "value": "{loco.engine}, {loco.rpm:F0} rpm", "when": "loco.hasEngine" },
     { "type": "field", "label": "Temperature", "labelWidth": 220, "value": "{loco.temperatureC:F0} °C", "when": "loco.hasTemperature" },
-    { "type": "field", "label": "Boiler pressure", "labelWidth": 220, "value": "{loco.boilerBar:F1} bar", "when": "loco.hasBoiler" },
-    { "type": "bar", "labelWidth": 220, "label": "Boiler water", "value": "loco.boilerWaterPct", "text": "{loco.boilerWaterPct:F0} %", "warnWhen": "loco.boilerWaterPct < 30 || loco.boilerWaterPct > 90", "when": "loco.hasBoiler" },
-    { "type": "field", "label": "Fire", "labelWidth": 220, "value": "{loco.fireboxC:F0} °C", "when": "loco.fireOn" },
-    { "type": "field", "label": "Fire", "labelWidth": 220, "value": "out", "when": "loco.hasFirebox && !loco.fireOn" }
+    { "type": "field", "label": "Boiler pressure", "labelWidth": 220, "value": "{loco.boilerBar:F1} bar", "when": "loco.hasBoiler && !firing.boiler.present" },
+    { "type": "bar", "labelWidth": 220, "label": "Boiler water", "value": "loco.boilerWaterPct", "text": "{loco.boilerWaterPct:F0} %", "warnWhen": "loco.boilerWaterPct < 30 || loco.boilerWaterPct > 90", "when": "loco.hasBoiler && !firing.boiler.present" },
+    { "type": "field", "label": "Fire", "labelWidth": 220, "value": "{loco.fireboxC:F0} °C", "when": "loco.fireOn && !firing.present" },
+    { "type": "field", "label": "Fire", "labelWidth": 220, "value": "out", "when": "loco.hasFirebox && !loco.fireOn && !firing.present" },
+
+    { "type": "field", "label": "Boiler pressure", "labelWidth": 220, "value": "{firing.boiler.pressureBar:F1} / {firing.boiler.workingBar:F1} bar", "when": "firing.boiler.present" },
+    { "type": "bar", "labelWidth": 220, "label": "Gauge glass", "value": "firing.boiler.glassBarPct", "text": "{firing.boiler.glassPct:F0} %, {firing.boiler.glassLevel}", "warnWhen": "firing.boiler.glassLevelAct", "when": "firing.boiler.present" },
+    { "type": "field", "label": "Fire", "labelWidth": 220, "value": "{firing.fire.state}, {firing.fire.temperatureC:F0} °C", "when": "firing.present && firing.fire.lit && firing.fire.hasTemperature" },
+    { "type": "field", "label": "Fire", "labelWidth": 220, "value": "{firing.fire.state}", "when": "firing.present && !firing.fire.lit || firing.present && !firing.fire.hasTemperature" }
   ],
   "softKeys": [
     { "label": "Sim ports", "link": "loco_ports", "when": "loco.present" }

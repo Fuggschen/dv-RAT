@@ -18,6 +18,7 @@ namespace DVRAT
                 ["solar"] = Solar(train),
                 ["electric"] = Electric(train?.Electric),
                 ["damage"] = Damage(train?.Locomotive?.Damage),
+                ["firing"] = Firing(train?.Locomotive?.Firing),
                 ["integrations"] = Integrations(world),
                 ["route"] = Route(route, jobs, world, stationName, TrainLimitLength(train, settings)),
                 ["jobs"] = Jobs(jobs),
@@ -223,6 +224,257 @@ namespace DVRAT
                 ["batteryLevel"] = Format.Percent(battery?.Charge ?? 0f),
             };
         }
+
+        /// <summary>
+        /// Realistic Firing's readings, one section per API section. Every key is there with a default when the mod
+        /// does not fire the loco or the engine lacks a section; <c>present</c> tells. A level "Ok", "Watch" or "Act"
+        /// comes as <c>…Level</c> in words plus <c>…Watch</c> and <c>…Act</c> flags.
+        /// </summary>
+        private static Dictionary<string, object> Firing(FiringData firing)
+        {
+            var fire = firing?.Fire ?? new FireReading();
+            var grate = firing?.Grate;
+            var coal = firing?.Coal;
+            var stoker = firing?.Stoker;
+            var burner = firing?.Burner;
+            var boiler = firing?.Boiler;
+            var overflow = firing?.Overflow;
+            var pump = firing?.FeedPump;
+            var engine = firing?.Engine;
+            var booster = firing?.Booster;
+            var fireman = firing?.Fireman;
+            var injectors = firing?.Injectors ?? new List<InjectorReading>();
+
+            var fireSection = new Dictionary<string, object>
+            {
+                ["lit"] = fire.Lit,
+                ["state"] = firing == null ? "" : fire.Lit ? "lit" : "out",
+                ["heatPct"] = fire.HeatPct,
+                // The good band is 40 to 90; a cold start reads far past 100.
+                ["heatBarPct"] = Clamp(fire.HeatPct, 0f, 100f),
+                ["draftPct"] = fire.DraftPct,
+                // The mod's overlay dial stops at 250; a dying fire reads far higher.
+                ["draftBarPct"] = Clamp(fire.DraftPct, 0f, 250f),
+                ["smokePct"] = fire.SmokePct,
+                ["hasTemperature"] = fire.TemperatureC != null,
+                ["temperatureC"] = fire.TemperatureC ?? 0f,
+            };
+            AddLevel(fireSection, "level", fire.Level);
+            AddLevel(fireSection, "draftLevel", fire.DraftLevel);
+
+            var boilerSection = new Dictionary<string, object>
+            {
+                ["present"] = boiler != null,
+                ["pressureBar"] = boiler?.PressureBar ?? 0f,
+                ["workingBar"] = boiler?.WorkingBar ?? 0f,
+                ["pressurePct"] = boiler?.PressurePct ?? 0f,
+                ["pressureBarPct"] = Clamp(boiler?.PressurePct ?? 0f, 0f, 100f),
+                ["glassPct"] = boiler?.GlassPct ?? 0f,
+                ["glassBarPct"] = Clamp(boiler?.GlassPct ?? 0f, 0f, 100f),
+                ["hasWaterTemperature"] = boiler?.WaterC != null,
+                ["waterC"] = boiler?.WaterC ?? 0f,
+                ["heating"] = boiler?.Heating ?? false,
+                ["hasFouling"] = boiler?.SootLossPct != null,
+                ["sootLossPct"] = boiler?.SootLossPct ?? 0f,
+                ["scaleLossPct"] = boiler?.ScaleLossPct ?? 0f,
+                ["hasImpurities"] = boiler?.ImpuritiesPpm != null,
+                ["impuritiesPpm"] = boiler?.ImpuritiesPpm ?? 0f,
+                ["foamPct"] = boiler?.FoamPct ?? 0f,
+                ["hasPlug"] = boiler?.PlugMelted != null,
+                ["plugMelted"] = boiler?.PlugMelted ?? false,
+                ["plugCoreC"] = boiler?.PlugCoreC ?? 0f,
+                ["hasAlarm"] = boiler?.AlarmSounding != null,
+                ["alarmSounding"] = boiler?.AlarmSounding ?? false,
+            };
+            AddLevel(boilerSection, "pressureLevel", boiler?.PressureLevel);
+            AddLevel(boilerSection, "glassLevel", boiler?.GlassLevel);
+
+            var adviceSection = new Dictionary<string, object>
+            {
+                ["present"] = !string.IsNullOrEmpty(firing?.AdviceText),
+                ["text"] = firing?.AdviceText ?? "",
+            };
+            AddLevel(adviceSection, "level", firing?.AdviceLevel);
+
+            string thin = grate?.ThinZone ?? "";
+            return new Dictionary<string, object>
+            {
+                ["present"] = firing != null,
+                ["fuel"] = firing?.Fuel?.ToLowerInvariant() ?? "",
+                ["coal"] = firing?.IsCoal ?? false,
+                ["oil"] = firing != null && !firing.IsCoal,
+                ["fire"] = fireSection,
+                ["advice"] = adviceSection,
+                ["grate"] = new Dictionary<string, object>
+                {
+                    ["present"] = grate != null,
+                    ["coalKg"] = grate?.CoalKg ?? 0f,
+                    ["ashpanPct"] = grate?.AshpanPct ?? 0f,
+                    ["ashpanFull"] = grate?.AshpanFull ?? false,
+                    ["clinkerKg"] = grate?.ClinkerKg ?? 0f,
+                    ["needsCleaning"] = grate?.NeedsCleaning ?? false,
+                    ["hasDoor"] = grate?.DoorPct != null,
+                    ["doorPct"] = grate?.DoorPct ?? 0f,
+                    ["hasThinZone"] = thin != "",
+                    ["thinZone"] = Words(thin),
+                    ["zoneReferenceKg"] = grate?.ZoneReferenceKg ?? 0f,
+                    ["zones"] = (grate?.Zones ?? new List<GrateZoneReading>()).Select(z => (object)new Dictionary<string, object>
+                    {
+                        ["name"] = Words(z.Name),
+                        ["coalKg"] = z.CoalKg,
+                        // Against a zone's working bed, so 100 is a full zone.
+                        ["bedPct"] = grate.ZoneReferenceKg > 0f ? z.CoalKg / grate.ZoneReferenceKg * 100f : 0f,
+                        ["burningPct"] = z.BurningPct,
+                        ["clinkerKg"] = z.ClinkerKg,
+                        ["thin"] = z.Name == thin,
+                    }).ToList(),
+                    ["rows"] = GrateRows(grate, thin),
+                },
+                ["coalState"] = new Dictionary<string, object>
+                {
+                    ["present"] = coal != null,
+                    ["moisturePct"] = coal?.MoisturePct ?? 0f,
+                    ["condition"] = (coal?.Condition ?? "").ToLowerInvariant(),
+                    ["wet"] = coal?.Condition == "Wet",
+                    ["hasCover"] = coal?.CoverOpen != null,
+                    ["cover"] = coal?.CoverOpen is bool open ? open ? "open" : "shut" : "",
+                },
+                ["stoker"] = new Dictionary<string, object>
+                {
+                    ["present"] = stoker != null,
+                    ["jammed"] = stoker?.Jammed ?? false,
+                    ["speedPct"] = stoker?.SpeedPct ?? 0f,
+                    ["tableKg"] = stoker?.TableKg ?? 0f,
+                    ["tableLoaded"] = stoker?.TableLoaded ?? false,
+                    ["jetsBar"] = stoker?.JetsBar ?? 0f,
+                },
+                ["burner"] = new Dictionary<string, object>
+                {
+                    ["present"] = burner != null,
+                    ["firingValvePct"] = burner?.FiringValvePct ?? 0f,
+                    ["hasStop"] = burner?.StopPct != null,
+                    ["stopPct"] = burner?.StopPct ?? 0f,
+                    ["feedKgPerS"] = burner?.FeedKgPerS ?? 0f,
+                    ["atomizerPct"] = burner?.AtomizerPct ?? 0f,
+                    ["atomizingPct"] = burner?.AtomizingPct ?? 0f,
+                    ["oilC"] = burner?.OilC ?? 0f,
+                    ["heaterPct"] = burner?.HeaterPct ?? 0f,
+                    ["brickC"] = burner?.BrickC ?? 0f,
+                    ["onShedSteam"] = burner?.OnShedSteam ?? false,
+                    ["steamLinePct"] = burner?.SteamLinePct ?? 0f,
+                    ["flueSootPct"] = burner?.FlueSootPct ?? 0f,
+                    ["lighting"] = (burner?.Lighting ?? new List<LightingStep>()).Count > 0,
+                    ["steps"] = (burner?.Lighting ?? new List<LightingStep>()).Select((s, i) => (object)new Dictionary<string, object>
+                    {
+                        ["number"] = i + 1,
+                        ["title"] = s.Title ?? "",
+                        ["how"] = s.How ?? "",
+                        ["done"] = s.Done,
+                        ["current"] = s.Current,
+                        ["mark"] = s.Done ? "[x]" : s.Current ? ">" : "[ ]",
+                    }).ToList(),
+                },
+                ["boiler"] = boilerSection,
+                ["hasInjectors"] = injectors.Count > 0,
+                ["injectors"] = injectors.Select(j => (object)new Dictionary<string, object>
+                {
+                    ["name"] = j.Name == "" ? "injector" : j.Name,
+                    ["state"] = Words(j.State),
+                    ["fault"] = j.State == "Broken" || j.State == "NoWater" || j.State == "LowPressure" || j.State == "Hot",
+                    ["waterKgPerS"] = j.WaterKgPerS,
+                    ["tenderShut"] = j.TenderShut,
+                    ["tender"] = j.TenderShut ? "tender shut" : "",
+                    // Two valves, or one lever on some engines.
+                    ["setting"] = j.SteamValve != null
+                        ? $"steam {Words(j.SteamValve)}, water {j.WaterValvePct ?? 0f:F0} %"
+                        : $"lever {j.LeverPct ?? 0f:F0} %",
+                }).ToList(),
+                ["overflow"] = new Dictionary<string, object>
+                {
+                    ["present"] = overflow != null,
+                    ["waterKgPerS"] = overflow?.WaterKgPerS ?? 0f,
+                    ["steamKgPerS"] = overflow?.SteamKgPerS ?? 0f,
+                },
+                ["feedPump"] = new Dictionary<string, object>
+                {
+                    ["present"] = pump != null,
+                    ["state"] = Words(pump?.State),
+                    ["fault"] = pump != null && pump.State != "Off" && pump.State != "Feeding",
+                    ["waterKgPerS"] = pump?.WaterKgPerS ?? 0f,
+                    ["temperatureC"] = pump?.TemperatureC ?? 0f,
+                },
+                ["engine"] = new Dictionary<string, object>
+                {
+                    ["present"] = engine != null,
+                    ["cutoffPct"] = engine?.CutoffPct ?? 0f,
+                    ["steamChestBar"] = engine?.SteamChestBar ?? 0f,
+                    ["meanPressureBar"] = engine?.MeanPressureBar ?? 0f,
+                    ["steamKgPerS"] = engine?.SteamKgPerS ?? 0f,
+                    ["condensingPct"] = engine?.CondensingPct ?? 0f,
+                    ["superheated"] = engine?.Superheated ?? false,
+                    ["superheatC"] = engine?.SuperheatC ?? 0f,
+                    ["steamC"] = engine?.SteamC ?? 0f,
+                },
+                ["booster"] = new Dictionary<string, object>
+                {
+                    ["present"] = booster != null,
+                    ["state"] = Words(booster?.State),
+                    ["warmPct"] = booster?.WarmPct ?? 0f,
+                },
+                ["fireman"] = new Dictionary<string, object>
+                {
+                    ["present"] = fireman != null,
+                    ["mode"] = Words(fireman?.Mode),
+                    ["hasCall"] = fireman != null && fireman.Call != "None",
+                    ["call"] = Words(fireman?.Call),
+                    ["callLeftS"] = fireman?.CallLeftS ?? 0f,
+                },
+            };
+        }
+
+        /// <summary>The 3 by 3 grate as three list rows, front at the tubes on top down to back at the door, as seen from the cab, each with its zones left to right.</summary>
+        private static List<object> GrateRows(GrateReading grate, string thin)
+        {
+            var zones = grate?.Zones ?? new List<GrateZoneReading>();
+            if (zones.Count != 9) return new List<object>();
+            string[] rows = { "back", "middle", "front" };
+            string[] sides = { "left", "center", "right" };
+            return new[] { 2, 1, 0 }.Select(r =>
+            {
+                string row = rows[r];
+                var item = new Dictionary<string, object> { ["row"] = row };
+                for (int s = 0; s < 3; s++)
+                {
+                    var zone = zones[r * 3 + s];
+                    item[sides[s]] = $"{zone.CoalKg:F0} kg, {zone.BurningPct:F0} %";
+                    item[sides[s] + "Thin"] = zone.Name == thin;
+                }
+                return (object)item;
+            }).ToList();
+        }
+
+        /// <summary>Adds <paramref name="key"/> as "ok", "watch" or "act", and the flags <c>key + "Watch"</c> and <c>key + "Act"</c>.</summary>
+        private static void AddLevel(Dictionary<string, object> section, string key, string level)
+        {
+            section[key] = Words(level ?? "Ok");
+            section[key + "Watch"] = level == "Watch";
+            section[key + "Act"] = level == "Act";
+        }
+
+        /// <summary>"LowPressure" to "low pressure".</summary>
+        private static string Words(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return "";
+            var words = new System.Text.StringBuilder(name.Length + 4);
+            for (int i = 0; i < name.Length; i++)
+            {
+                if (i > 0 && char.IsUpper(name[i])) words.Append(' ');
+                words.Append(char.ToLowerInvariant(name[i]));
+            }
+            return words.ToString();
+        }
+
+        private static float Clamp(float value, float min, float max) => value < min ? min : value > max ? max : value;
 
         private static Dictionary<string, object> Damage(DamageInfo damage)
         {

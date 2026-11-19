@@ -89,6 +89,7 @@ namespace DVRAT
                     var locoCar = cars.FirstOrDefault(c => c != null && c.ID == data.Locomotive.CarId);
                     ReadFee(locoCar, data.Locomotive);
                     data.Locomotive.OdometerKm = Odometer.KmOf(locoCar);
+                    data.Locomotive.Firing = FiringData.FromReadings(RealisticFiring.Read(locoCar));
                 }
             }
             catch (Exception ex)

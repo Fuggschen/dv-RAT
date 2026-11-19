@@ -296,12 +296,19 @@ namespace DVRAT
                 _visibility.Add(root => rowObject.SetActive(Template.Evaluate(row.When, root, _pendingMissing)));
         }
 
-        /// <summary>Label and a value that may contain [[links]]. The value is rebuilt only when its text changes.</summary>
+        /// <summary>
+        /// Label and a value that may contain [[links]]. The value is rebuilt only when its text changes.
+        /// With <c>lines</c> above 1 the row is that many lines tall and its text wraps, top aligned.
+        /// </summary>
         private GameObject FieldRow(Transform parent, PageContext context, RowDefinition row)
         {
-            var rowRect = UIFactory.Row(parent);
-            UIFactory.Width(UIFactory.Label(rowRect, row.Label ?? "", Theme.FontBody, Theme.TextDim), row.LabelWidth ?? 160);
-            var valueRect = UIFactory.Row(rowRect, Theme.RowHeight, 8, "Value");
+            int lines = Math.Max(row.Lines ?? 1, 1);
+            bool wrap = lines > 1;
+            var anchor = wrap ? TextAnchor.UpperLeft : TextAnchor.MiddleLeft;
+            float height = Theme.RowHeight * lines;
+            var rowRect = UIFactory.Row(parent, height);
+            UIFactory.Width(UIFactory.Label(rowRect, row.Label ?? "", Theme.FontBody, Theme.TextDim, anchor), row.LabelWidth ?? 160);
+            var valueRect = UIFactory.Row(rowRect, height, 8, "Value");
             UIFactory.Width(valueRect, 0, 1);
             var style = StyleOf(row.Style);
 
@@ -317,9 +324,13 @@ namespace DVRAT
                     if (segment.IsLink)
                         LinkButton(valueRect, context, segment.Target, segment.Text);
                     else if (segment.Text.Trim() != "")
-                        UIFactory.Label(valueRect, segment.Text.Trim(), style.Size, style.Color, TextAnchor.MiddleLeft, style.FontStyle);
+                    {
+                        var label = UIFactory.Label(valueRect, segment.Text.Trim(), style.Size, style.Color, anchor, style.FontStyle);
+                        // Laid out at its full width the text would never wrap.
+                        if (wrap) UIFactory.Width(label, 0, 1);
+                    }
                 }
-                UIFactory.Width(UIFactory.Rect("Spacer", valueRect), 0, 1);
+                if (!wrap) UIFactory.Width(UIFactory.Rect("Spacer", valueRect), 0, 1);
             });
             return rowRect.gameObject;
         }

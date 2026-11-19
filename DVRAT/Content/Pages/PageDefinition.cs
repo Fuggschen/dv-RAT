@@ -47,6 +47,9 @@ namespace DVRAT
         [JsonProperty("style")] public string Style { get; set; }
         [JsonProperty("labelWidth")] public float? LabelWidth { get; set; }
 
+        /// <summary>For "field": lines the value may wrap onto, default 1.</summary>
+        [JsonProperty("lines")] public int? Lines { get; set; }
+
         /// <summary>For "pairs": <c>[["Speed", "{train.speedKmh:F0} km/h"]]</c>.</summary>
         [JsonProperty("items")] public List<List<string>> Items { get; set; }
 
@@ -213,6 +216,8 @@ namespace DVRAT
             if (row.Type == "checklist" && (string.IsNullOrEmpty(row.Source) || string.IsNullOrEmpty(row.Var)
                 || string.IsNullOrEmpty(row.Value) || string.IsNullOrEmpty(row.Text)))
                 problems.Add($"{where}: a checklist needs \"source\", \"var\", \"value\" and \"text\"");
+            if (row.Lines != null && (row.Type != "field" || row.Lines < 1))
+                problems.Add($"{where}: \"lines\" only works on fields, from 1 up");
             if (row.Type == "bar" && string.IsNullOrEmpty(row.Value))
                 problems.Add($"{where}: a bar needs \"value\"");
             if (row.Type == "pairs" && (row.Items == null || row.Items.Any(p => p == null || p.Count != 2)))

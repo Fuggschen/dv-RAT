@@ -69,6 +69,13 @@ Subpages:
   price.
   - **Supplies:** fuel, oil, sand, water, coal and battery as bars, each with its use per minute and the
     time left. Engine state and temperature; boiler pressure, boiler water and fire for steam locos.
+    With the Realistic Firing mod, its boiler pressure, gauge glass and fire instead, as the Firing page
+    shows them.
+  - **Firing:** with the Realistic Firing mod, a steam loco's fire as the mod's overlay shows it, in five
+    views: fire (heat, draft, smoke, coal, stoker, automatic fireman), boiler (pressure, gauge glass,
+    water, fouling, fusible plug, alarm), grate or burner (coal on each of the nine grate zones, ashpan
+    and clinker; or the oil burner and the steps to light it), water (injectors, overflow, feed pump)
+    and engine (cutoff, steam chest, superheat, booster). The mod's next step is shown above each view.
   - **Electric:** for locos on the overhead wire of the 1500 V DC Catenary mod: line voltage, current,
     power, regeneration, energy used, traction motors and each pantograph. The WE-4U's traction battery
     is shown as well.
@@ -192,6 +199,7 @@ The tablet reads data from these mods while they are loaded. None of them is req
 | Passenger Jobs | Its job types and licenses, its rural stations in the planner and shunting plan |
 | Persistent Jobs | Station jobs from anywhere, and the cars it has taken out of far-away yards |
 | Realistic Brakes | Valve types, driver's valve and equalizing reservoir |
+| Realistic Firing | The Firing page; its boiler pressure, gauge glass and fire on the Supplies page |
 | Solar Gadgets | The Power page |
 | Track Maintenance | Damaged track as speed restrictions, track damage on the Maintenance page |
 

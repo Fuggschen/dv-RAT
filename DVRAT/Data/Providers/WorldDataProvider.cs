@@ -34,6 +34,7 @@ namespace DVRAT
                 new IntegrationStatus { Name = "Passenger Jobs", State = RuralStations.State },
                 new IntegrationStatus { Name = "Persistent Jobs", State = SuspendedCars.State },
                 new IntegrationStatus { Name = "Realistic Brakes", State = RealisticBrakes.State },
+                new IntegrationStatus { Name = "Realistic Firing", State = RealisticFiring.State },
                 new IntegrationStatus { Name = "Solar Gadgets", State = SolarGadgetsPower.State },
                 new IntegrationStatus { Name = "Track Maintenance", State = TrackDamage.State },
                 new IntegrationStatus { Name = "WE-4U (traction battery)", State = WE4UBattery.State },

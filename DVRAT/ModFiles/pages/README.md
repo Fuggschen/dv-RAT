@@ -47,7 +47,7 @@ Every row can have `"when": "<condition>"`; it is only shown while the condition
 | `text` | `text`, `style` | One line of text. |
 | `heading` | `text` | Bold section title. |
 | `divider` | | Thin line. |
-| `field` | `label`, `value`, `labelWidth`, `style` | Label and value. The value may contain links: `[[station:{route.nextStationId}]]`. |
+| `field` | `label`, `value`, `labelWidth`, `style`, `lines` | Label and value. The value may contain links: `[[station:{route.nextStationId}]]`. With `lines` (default 1) the row is that many lines tall and a long value wraps onto them. |
 | `pairs` | `items`, `labelWidth` | Several label/value pairs side by side: `[["Speed", "{train.speedKmh:F0} km/h"], ...]`. |
 | `bar` | `label`, `value`, `min`, `max`, `text`, `warnWhen`, `labelWidth` | A bar filled from `min` (default 0) to `max` (default 100). `value`, `min` and `max` are paths, numbers or arithmetic without braces: `"value": "loco.fuel.pct"`. `text` is shown after the bar. The bar turns red while `warnWhen` holds. |
 | `buttons` | `buttons`, `label` | A row of buttons, with an optional `label` in front with the same keys as a soft key (`label`, `link`, `set`, `when`, `enabledWhen`) plus `selectedWhen`: while it holds, the button is drawn pressed. An item without `link`, `set` or `planJobs` is shown as text, e.g. the value between - and + buttons. |
@@ -207,6 +207,41 @@ The WE-4U's traction battery: `hasBattery`, `onBattery` (the battery feeds the m
 Each part: `name` (`Body`, `Wheels`, `Mechanical powertrain`, `Electrical powertrain`; a loco without one leaves it
 out), `healthPct`, `health` (text).
 Each fuse of the simulation: `id`, `on`, `state` (`on` or `off`).
+
+**firing** (the shown loco's fire, boiler and engine from the Realistic Firing mod, as its F6 overlay shows them;
+units: `Pct` percent, `Bar` gauge bar, `C` °C, `Kg`, `KgPerS`, `S` seconds, `Ppm`): `present` (false unless the mod
+fires the loco), `fuel` (`coal` or `oil`), `coal`, `oil`. Every key below is there with a default when the mod or a
+part is missing; each section's `present` tells. A level is `ok`, `watch` (wants doing soon) or `act` (wants doing
+now), with flags of the same name plus `Watch` and `Act`, e.g. `firing.fire.levelAct`.
+`fire`: `lit`, `state` (`lit` or `out`), `heatPct` (good 40 to 90; far past 100 on a cold start), `heatBarPct` (0 to
+100), `level`, `draftPct` (air against what the fire wants, 100 right), `draftBarPct` (0 to 250), `draftLevel`,
+`smokePct` (0 clear to 100 black), `hasTemperature`, `temperatureC` (coal only).
+`advice` (the next step at the foot of the overlay): `present`, `text`, `level`.
+`grate` (coal): `present`, `coalKg`, `ashpanPct`, `ashpanFull`, `clinkerKg`, `needsCleaning`, `hasDoor`, `doorPct`,
+`hasThinZone`, `thinZone` (e.g. `front left`), `zoneReferenceKg` (a zone's working bed), `zones` (list of nine, from
+the fire door to the tubes, each row left to right: `name`, `coalKg`, `bedPct` (against the working bed),
+`burningPct`, `clinkerKg`, `thin`), `rows` (the same as three rows `front`, `middle`, `back`, so the tubes are on top as seen from the cab: `row`, `left`,
+`center`, `right` (text, e.g. `21 kg, 48 %`), `leftThin`, `centerThin`, `rightThin`).
+`coalState` (coal): `present`, `moisturePct`, `condition` (`dry`, `damp`, `wet`), `wet`, `hasCover`, `cover` (`open`
+or `shut`). `stoker`: `present`, `jammed`, `speedPct`, `tableKg`, `tableLoaded` (wants raking), `jetsBar`.
+`burner` (oil): `present`, `firingValvePct`, `hasStop`, `stopPct`, `feedKgPerS`, `atomizerPct`, `atomizingPct`
+(under 100 too little steam for the oil), `oilC`, `heaterPct`, `brickC`, `onShedSteam`, `steamLinePct`,
+`flueSootPct`, `lighting` (true while the fire is out), `steps` (list, the steps to light it in order: `number`,
+`title`, `how`, `done`, `current`, `mark` (`[x]`, `>` or `[ ]`)).
+`boiler`: `present`, `pressureBar`, `workingBar` (where the safety valves lift), `pressurePct` (good 85 to 100),
+`pressureBarPct`, `pressureLevel`, `glassPct` (the gauge glass, good 40 to 75), `glassBarPct`, `glassLevel`,
+`hasWaterTemperature`, `waterC`, `heating` (raising steam from cold), `hasFouling`, `sootLossPct`, `scaleLossPct`,
+`hasImpurities` (the mod's impurities setting is on), `impuritiesPpm`, `foamPct`, `hasPlug`, `plugMelted`,
+`plugCoreC`, `hasAlarm`, `alarmSounding`.
+`hasInjectors`, `injectors` (list of the mod's injectors; empty when the engine's own work): `name`, `state` (`off`,
+`priming`, `working`, `hot`, `low pressure`, `no water`, `broken`), `fault`, `waterKgPerS`, `tenderShut`, `tender`
+(`tender shut` or empty), `setting` (text, the steam and water valves or the lever).
+`overflow`: `present`, `waterKgPerS`, `steamKgPerS` (wasted). `feedPump`: `present`, `state` (`off`, `feeding`,
+`choked`, `racing`, `lost suction`, `tripped`), `fault`, `waterKgPerS`, `temperatureC`.
+`engine` (while the mod works the cylinders): `present`, `cutoffPct`, `steamChestBar`, `meanPressureBar`,
+`steamKgPerS`, `condensingPct`, `superheated`, `superheatC`, `steamC`. `booster`: `present`, `state` (`cut out`,
+`idling`, `cocks open`, `working`), `warmPct`. `fireman` (the mod's automatic fireman): `present`, `mode` (`off`,
+`keep alive`, `shunting`, `road`), `hasCall`, `call` (`heavy ahead`, `easing off`), `callLeftS`.
 
 **integrations** (other mods whose data the tablet reads): `anyFailed`, `list`. Each one: `name`, `state` (`Active`
 while the mod is loaded and read, `Inactive` while it is not loaded, `Failed` when it is loaded but could not be read;
