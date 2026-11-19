@@ -216,6 +216,9 @@ namespace DVRAT
                         loco.Throttle = controls.Throttle?.Value ?? 0f;
                         loco.Reverser = TrackNames.ReverserDirection(car);
                         loco.HandbrakePosition = controls.Handbrake?.Value ?? 0f;
+                        // The game names the flag "cutout", but true means the valve is cut in.
+                        if (controls.BrakeCutout != null && car.brakeSystem != null)
+                            loco.TrainBrakeCutIn = car.brakeSystem.trainBrakeCutout;
                     }
 
                     ReadSimulation(simController, loco);
@@ -310,12 +313,12 @@ namespace DVRAT
                 loco.FireboxTemperature = fireTemperature;
             }
 
-            // Steam valve cutoff, set by the reverser.
-            var cutoff = loco.Ports.FirstOrDefault(p => p.Id.EndsWith(".CUTOFF", StringComparison.Ordinal) || p.Id.EndsWith(".CUT_OFF", StringComparison.Ordinal));
-            if (cutoff != null)
+            // Steam valve cutoff. The engine keeps it private and exposes no port, so this repeats its formula.
+            var steamEngine = simController.simFlow.OrderedSimComps?.OfType<ReciprocatingSteamEngine>().FirstOrDefault();
+            if (steamEngine != null)
             {
                 loco.HasCutoff = true;
-                loco.Cutoff = Mathf.Abs(cutoff.Value);
+                loco.Cutoff = Mathf.Lerp(steamEngine.minCutoff, steamEngine.maxCutoff, Mathf.Abs(steamEngine.reverserControl.Value));
             }
 
             // The traction motor set reads its temperature through a port reference. The connection names the port.

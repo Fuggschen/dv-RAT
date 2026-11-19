@@ -149,7 +149,8 @@ force from 600), `handbrakes` (count), `handbrake` (text),
 when isolated; `mixed` in a group of different ones; empty without the mod). `train.realisticBrakes` is true while that mod runs the brakes.
 
 **loco**: `present`, `type` (livery ID, for links like `car:{loco.type}`), `name`, `throttle`, `reverser`, `trainBrake`, `independentBrake`,
-`handbrake` (text), `brakePipeBar`, `mainReservoirBar`, `brakeCylinderBar` (bar above atmosphere, 0 when empty).
+`handbrake` (text), `hasBrakeCutout`, `brakeCutout` (train brake cutout valve: `cut in`, `cut out`, or `--` on a
+loco without one), `brakePipeBar`, `mainReservoirBar`, `brakeCylinderBar` (bar above atmosphere, 0 when empty).
 With the Realistic Brakes mod: `hasDriverValve`, `driverValve` (`cut in`, or `cut out` on a trailing engine),
 `equalizing` (equalizing reservoir, text, `--` without one).
 Engine (diesel only): `hasEngine`, `engineOn`, `engine` (text), `rpm`; `hasTemperature`, `temperatureC`.

@@ -17,7 +17,7 @@
     { "type": "divider", "when": "loco.present" },
     { "type": "heading", "text": "Controls", "when": "loco.present" },
     { "type": "pairs", "labelWidth": 100, "when": "loco.present",
-      "items": [ ["Throttle", "{loco.throttle}"], ["Reverser", "{loco.reverser}"], ["Cutoff", "{loco.cutoff}"] ] },
+      "items": [ ["Throttle", "{loco.throttle}"], ["Reverser", "{loco.reverser}"], ["Brake valve", "{loco.brakeCutout}"] ] },
     { "type": "pairs", "labelWidth": 100, "when": "loco.present",
       "items": [ ["Train brake", "{loco.trainBrake}"], ["Ind. brake", "{loco.independentBrake}"], ["Handbrake", "{loco.handbrake}"] ] },
 

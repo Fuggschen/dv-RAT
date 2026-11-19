@@ -142,6 +142,8 @@ namespace DVRAT
         public float? EqualizingReservoirPressure { get; set; }
         /// <summary>Realistic Brakes: driver's brake valve position, e.g. "Running". Null without it.</summary>
         public string DriverValve { get; set; }
+        /// <summary>Position of the train brake cutout valve: true cut in, false cut out. Null on a loco without one.</summary>
+        public bool? TrainBrakeCutIn { get; set; }
 
         public bool HasTraction { get; set; }
         public float TractiveEffortKn { get; set; }

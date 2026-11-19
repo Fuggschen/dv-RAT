@@ -599,6 +599,8 @@ namespace DVRAT
                 ["trainBrake"] = loco == null ? "" : Format.Percent(loco.TrainBrakePosition),
                 ["independentBrake"] = loco == null ? "" : Format.Percent(loco.IndependentBrakePosition),
                 ["handbrake"] = loco == null ? "" : loco.HandbrakePosition > 0.1f ? "applied" : "released",
+                ["hasBrakeCutout"] = loco?.TrainBrakeCutIn != null,
+                ["brakeCutout"] = loco?.TrainBrakeCutIn is bool cutIn ? (cutIn ? "cut in" : "cut out") : "--",
                 ["hasTraction"] = loco?.HasTraction ?? false,
                 ["tractiveEffortKn"] = loco?.TractiveEffortKn ?? 0f,
                 ["powerKw"] = loco?.PowerKw ?? 0f,
